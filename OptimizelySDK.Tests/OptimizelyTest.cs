@@ -60,7 +60,7 @@ namespace OptimizelySDK.Tests
             ErrorHandlerMock = new Mock<IErrorHandler>();
             ErrorHandlerMock.Setup(e => e.HandleError(It.IsAny<Exception>()));
 
-            EventBuilderMock = new Mock<EventBuilder>(new Bucketer(LoggerMock.Object));
+            EventBuilderMock = new Mock<EventBuilder>(new Bucketer(LoggerMock.Object), LoggerMock.Object);
 
             EventBuilderMock.Setup(b => b.CreateImpressionEvent(It.IsAny<ProjectConfig>(), It.IsAny<Experiment>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserAttributes>()));

@@ -15,6 +15,7 @@
  */
 using OptimizelySDK.Bucketing;
 using OptimizelySDK.Entity;
+using OptimizelySDK.Logger;
 using OptimizelySDK.Utils;
 using System;
 using System.Collections.Generic;
@@ -45,9 +46,12 @@ namespace OptimizelySDK.Event.Builder
 
         private Bucketer Bucketer;
 
-        public EventBuilder(Bucketer bucketer)
+        private ILogger Logger;
+
+        public EventBuilder(Bucketer bucketer, ILogger logger)
         {
-            Bucketer = bucketer; 
+            Bucketer = bucketer;
+            Logger = logger;
             ResetParams();
         }
 
@@ -205,19 +209,13 @@ namespace OptimizelySDK.Event.Builder
 
                 if(eventTags != null)
                 {
-                    var revenue = EventTagUtils.GetRevenueValue(eventTags);
-
+                    var revenue = EventTagUtils.GetRevenueValue(eventTags, Logger);
                     if (revenue != null)
-                    {
                         eventDict[EventTagUtils.REVENUE_EVENT_METRIC_NAME] = revenue;
-                    }
 
-                    var eventVallue = EventTagUtils.GetNumericValue(eventTags, new Logger.DefaultLogger());
-
-                    if(eventVallue != null)
-                    {
+                    var eventVallue = EventTagUtils.GetNumericValue(eventTags, Logger);
+                    if (eventVallue != null)
                         eventDict[EventTagUtils.VALUE_EVENT_METRIC_NAME] = eventVallue;
-                    }
 
                     eventDict["tags"] = eventTags;
                 }

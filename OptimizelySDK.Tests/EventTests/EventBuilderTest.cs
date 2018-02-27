@@ -23,7 +23,7 @@ namespace OptimizelySDK.Tests.EventTests
             TestUserId = "testUserId";
             var logger = new NoOpLogger();
             Config = ProjectConfig.Create(TestData.Datafile, logger, new ErrorHandler.NoOpErrorHandler());
-            EventBuilder = new EventBuilder(new Bucketer(logger));
+            EventBuilder = new EventBuilder(new Bucketer(logger), logger);
         }
 
         [Test]

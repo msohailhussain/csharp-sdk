@@ -91,7 +91,7 @@ namespace OptimizelySDK
             EventDispatcher = eventDispatcher ?? new DefaultEventDispatcher(Logger);
             ErrorHandler = errorHandler ?? new NoOpErrorHandler();
             Bucketer = new Bucketer(Logger);
-            EventBuilder = new EventBuilder(Bucketer);
+            EventBuilder = new EventBuilder(Bucketer, Logger);
             UserProfileService = userProfileService;
             NotificationCenter = new NotificationCenter(Logger);
 
