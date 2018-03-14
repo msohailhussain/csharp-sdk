@@ -54,7 +54,7 @@ namespace OptimizelySDK
                 // Example output: "1.2.1" .  Should be kept in synch with NuGet package version.
 #if NET35
                 Assembly assembly = Assembly.GetExecutingAssembly();
-#else
+#else         ///test
                 Assembly assembly = typeof(Optimizely).GetTypeInfo().Assembly;
 #endif
                 // Microsoft    Major.Minor.Build.Revision
