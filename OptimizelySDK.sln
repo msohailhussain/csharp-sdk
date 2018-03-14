@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
+# Visual Studio 15 
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimizelySDK.DemoApp", "OptimizelySDK.DemoApp\OptimizelySDK.DemoApp.csproj", "{9394F666-6397-41C0-8867-C3E4DA9156E3}"
@@ -84,5 +84,5 @@ Global
 		$2.NewLineForMembersInAnonymousTypes = False
 		$2.NewLineForClausesInQuery = False
 		$2.scope = text/x-csharp
-	EndGlobalSection
+	EndGlobalSection 
 EndGlobal
