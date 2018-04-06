@@ -1,11 +1,30 @@
 language: csharp
 mono:
-- 5.2.0
+  - 5.2.0
 solution: "./OptimizelySDK.Travis.sln"
 install:
   - nuget restore ./OptimizelySDK.Travis.sln
+  - sudo apt-get install gtk-sharp2
+  - curl -sS https://api.nuget.org/packages/mono.cecil.0.9.5.4.nupkg > /tmp/mono.cecil.0.9.5.4.nupkg.zip
+  - unzip /tmp/mono.cecil.0.9.5.4.nupkg.zip -d /tmp/cecil
+  - cp /tmp/cecil/lib/net40/Mono.Cecil.dll .
+  - cp /tmp/cecil/lib/net40/Mono.Cecil.dll /tmp/cecil/
+  - git clone --depth=50 git://github.com/csMACnz/monocov.git ../../csMACnz/monocov
+  - cd ../../csMACnz/monocov
+  - cp /tmp/cecil/Mono.Cecil.dll .
+  - ./configure
+  - make
+  - sudo make install
+  - cd $TRAVIS_BUILD_DIR
   - nuget install ./OptimizelySDK.Tests/packages.config -OutputDirectory ./packages
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory ./testrunner
 script:
   - xbuild /p:Configuration=Release ./OptimizelySDK.Travis.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./OptimizelySDK.Tests/bin/Release/OptimizelySDK.Tests.dll 
+  - export LD_LIBRARY_PATH=/usr/local/lib
+  - mono --debug --profile=monocov:outfile=monocovCoverage.cov ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe --process=Single ./OptimizelySDK.Tests/bin/Release/OptimizelySDK.Tests.dll
+  - ls
+  - monocov --export-xml=monocovCoverage monocovCoverage.cov
+  - cat monocovCoverage.cov
+  - ls monocovCoverage
+  - mono ./packages/coveralls.net.0.7.0/tools/csmacnz.Coveralls.exe --monocov -i ./monocovCoverage --serviceName travis-ci  --useRelativePaths
+
