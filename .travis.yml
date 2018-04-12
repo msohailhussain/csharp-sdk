@@ -2,6 +2,8 @@ language: csharp
 mono:
   - 5.10.0
 solution: "./OptimizelySDK.Travis.sln"
+env:
+  - COVERALLS_REPO_TOKEN=sIZu1AJRbshqiquJZXu9TsS717muEKB0g
 install:
   - nuget restore ./OptimizelySDK.Travis.sln
   - nuget install ./OptimizelySDK.Tests/packages.config -OutputDirectory ./packages
