@@ -85,6 +85,7 @@
     <Compile Include="ErrorHandler\IErrorHandler.cs" />
     <Compile Include="ErrorHandler\NoOpErrorHandler.cs" />
     <Compile Include="Event\Builder\EventBuilder.cs" />
+    <Compile Include="Matcher\ExistsMatcher.cs" />
     <Compile Include="Event\Builder\Params.cs" />
     <Compile Include="Event\Dispatcher\DefaultEventDispatcher.cs" />
     <Compile Include="Event\Dispatcher\WebRequestEventDispatcher35.cs" />
@@ -96,6 +97,10 @@
     <Compile Include="Logger\DefaultLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\NoOpLogger.cs" />
+    <Compile Include="Matcher\AttributeMatcher.cs" />
+    <Compile Include="Matcher\DefaultMatcherForLegacyAttributes.cs" />
+    <Compile Include="Matcher\ExactMatcher.cs" />
+    <Compile Include="Matcher\GTMatcher.cs" />
     <Compile Include="Notifications\NotificationCenter.cs" />
     <Compile Include="Optimizely.cs" />
     <Compile Include="ProjectConfig.cs" />
