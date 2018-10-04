@@ -51,7 +51,7 @@ namespace OptimizelySDK.Tests.UtilsTests
                 {"browser", "Chrome" }
             };
 
-            Assert.IsTrue(ConditionEvaluator.Evaluate(Conditions, userAttributes));
+            Assert.IsTrue(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace OptimizelySDK.Tests.UtilsTests
                 {"browser", "Firefox" }
             };
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes));
+            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes();
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes));
+            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             UserAttributes userAttributes = null;
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes));
+            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace OptimizelySDK.Tests.UtilsTests
 
             string typedConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone""}]], [""or"", [""or"", {""name"": ""is_firefox"", ""type"": ""custom_attribute"", ""value"": false}]], [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15}]], [""or"", [""or"", {""name"": ""pi_value"", ""type"": ""custom_attribute"", ""value"": 3.14}]]]";
             var typedConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(typedConditionStr);
-            Assert.IsTrue(ConditionEvaluator.Evaluate(typedConditions, userAttributes));
+            Assert.IsTrue(ConditionEvaluator.Evaluate(typedConditions, userAttributes).GetValueOrDefault());
         }
     }
 }

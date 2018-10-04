@@ -16,7 +16,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OptimizelySDK.Entity;
-using System;
+using OptimizelySDK.Matcher;
 using System.Linq;
 
 namespace OptimizelySDK.Utils
@@ -38,23 +38,55 @@ namespace OptimizelySDK.Utils
         /// </summary>
         const string NOT_OPERATOR = "not";
 
-        private bool AndEvaluator(JArray conditions, UserAttributes userAttributes)
+        /// <summary>
+        /// String constant representing custome attribute condition type.
+        /// </summary>
+        const string CUSTOM_ATTRIBUTE_CONDITION_TYPE = "custom_attribute";
+        
+        private bool? AndEvaluator(JArray conditions, UserAttributes userAttributes)
         {
-            return conditions.All(condition => Evaluate(condition, userAttributes));
+            // According to the matrix where:
+            // false and true is false
+            // false and null is false
+            // true and null is null.
+            // true and false is false
+            // true and true is true
+            // null and null is null
+            if (conditions.Any(condition => Evaluate(condition, userAttributes) == false))
+                return false;
+            else if (conditions.Any(condition => Evaluate(conditions, userAttributes) == null))
+                return null;
+            else
+                return true;
         }
 
-        private bool OrEvaluator(JArray conditions, UserAttributes userAttributes)
+        private bool? OrEvaluator(JArray conditions, UserAttributes userAttributes)
         {
-            return conditions.Any(condition => Evaluate(condition, userAttributes));
+            // According to the matrix:
+            // true returns true
+            // false or null is null
+            // false or false is false
+            // null or null is null
+            if (conditions.Any(condition => Evaluate(condition, userAttributes) == true))
+                return true;
+            else if (conditions.Any(condition => Evaluate(condition, userAttributes) == null))
+                return null;
+            else
+                return true;
         }
 
-        private bool NotEvaluator(JArray conditions, UserAttributes userAttributes)
+        private bool? NotEvaluator(JArray conditions, UserAttributes userAttributes)
         {
-            return conditions.Count == 1 && !Evaluate(conditions[0], userAttributes);
+            if (conditions.Count == 1)
+            {
+                var result = Evaluate(conditions[0], userAttributes);
+                return result == null ? null : !result;
+            }
 
+            return false;
         }
 
-        public bool Evaluate(JToken conditions, UserAttributes userAttributes)
+        public bool? Evaluate(JToken conditions, UserAttributes userAttributes)
         {
             //Cloning is because it is reference type
             var conditionsArray = conditions.DeepClone() as JArray;
@@ -70,11 +102,17 @@ namespace OptimizelySDK.Utils
                 }
             }
 
-            string conditionName = conditions["name"].ToString();
-            return userAttributes != null && userAttributes.ContainsKey(conditionName) && CompareValues(userAttributes[conditionName], conditions["value"]);
+            if (conditions["type"] != null && conditions["type"].ToString() != CUSTOM_ATTRIBUTE_CONDITION_TYPE)
+                return null;
+
+            var matchType = conditions["match"].ToString();
+            var conditionValue = conditions["value"];
+            var attribute = userAttributes[conditions["name"].ToString()];
+
+            return MatcherType.GetMatcher(matchType, conditionValue)?.Eval(attribute);
         }
 
-        public bool Evaluate(object[] conditions, UserAttributes userAttributes)
+        public bool? Evaluate(object[] conditions, UserAttributes userAttributes)
         {
             return Evaluate(ConvertObjectArrayToJToken(conditions), userAttributes);
         }
@@ -91,28 +129,28 @@ namespace OptimizelySDK.Utils
             return JToken.Parse(conditions);
         }
 
-        private bool CompareValues(object attribute, JToken condition)
-        {
-            try
-            {
-                switch (condition.Type)
-                {
-                    case JTokenType.Integer:
-                        return (int)condition == Convert.ToInt32(attribute);
-                    case JTokenType.Float:
-                        return (double)condition == Convert.ToDouble(attribute);
-                    case JTokenType.String:
-                        return (string)condition == Convert.ToString(attribute);
-                    case JTokenType.Boolean:
-                        return (bool)condition == Convert.ToBoolean(attribute);
-                    default:
-                        return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //private bool CompareValues(object attribute, JToken condition)
+        //{
+        //    try
+        //    {
+        //        switch (condition.Type)
+        //        {
+        //            case JTokenType.Integer:
+        //                return (int)condition == Convert.ToInt32(attribute);
+        //            case JTokenType.Float:
+        //                return (double)condition == Convert.ToDouble(attribute);
+        //            case JTokenType.String:
+        //                return (string)condition == Convert.ToString(attribute);
+        //            case JTokenType.Boolean:
+        //                return (bool)condition == Convert.ToBoolean(attribute);
+        //            default:
+        //                return false;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
     }
 }

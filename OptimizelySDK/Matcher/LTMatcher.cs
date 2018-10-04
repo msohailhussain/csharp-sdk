@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace OptimizelySDK.Matcher
 {
-    public class ExactMatcher<T> : IAttributeMatcher<T>
+    public class LTMatcher<T> : IAttributeMatcher<T> where T : IComparable
     {
         T ConditionValue;
 
-        public ExactMatcher(T conditionValue)
+        public LTMatcher(T conditionValue)
         {
-            ConditionValue = conditionValue;
+            ConditionValue = conditionValue;    
         }
 
         public override bool? Eval(object attributeValue)
         {
-            if (Convert(attributeValue, out T convertedValue))
-                return ConditionValue.Equals(convertedValue);
+            if (attributeValue is int || attributeValue is double)
+            {
+                if (Convert(attributeValue, out T convertedValue))
+                    return convertedValue.CompareTo(ConditionValue) < 0;
+            }
 
             return null;
         }

@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace OptimizelySDK.Matcher
 {
-    public abstract class AttributeMatcher
+    public abstract class IAttributeMatcher<T> : IMatcher
     {
-        //public object ConditionValue = null;
-
-        //public AttributeMatcher(object conditionValue)
-        //{
-        //    ConditionValue = conditionValue;
-        //}
-
         public abstract bool? Eval(object attributeValue);
+
+        public bool Convert(object attributeValue, out T convertedValue)
+        {
+            try
+            {
+                convertedValue = (T)attributeValue;
+                return true;
+            }
+            catch (Exception)
+            {
+                convertedValue = default(T);
+                return false;
+            }
+        }
     }
 }

@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace OptimizelySDK.Matcher
 {
-    public class DefaultMatcherForLegacyAttributes : AttributeMatcher
+    public class DefaultMatcherForLegacyAttributes : IAttributeMatcher<string>
     {
-        object ConditionValue;
-        public DefaultMatcherForLegacyAttributes(object conditionValue)
+        string ConditionValue;
+
+        public DefaultMatcherForLegacyAttributes(string conditionValue)
         {
             ConditionValue = conditionValue;
         }
 
         public override bool? Eval(object attributeValue)
         {
-            return ConditionValue == attributeValue;
+            if (Convert(attributeValue, out string convertedValue))
+                return ConditionValue == convertedValue;
+
+            return null;
         }
     }
 }

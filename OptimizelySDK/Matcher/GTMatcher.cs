@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace OptimizelySDK.Matcher
 {
-    public class GTMatcher : AttributeMatcher
+    public class GTMatcher<T> : IAttributeMatcher<T> where T : IComparable
     {
-        public GTMatcher(object conditionValue) : base(conditionValue) { }
+        T ConditionValue;
+
+        public GTMatcher(T conditionValue)
+        {
+            ConditionValue = conditionValue;
+        }
 
         public override bool? Eval(object attributeValue)
         {
-            if (attributeValue is double || attributeValue is float)
-                return attributeValue > ConditionValue;
+            if (attributeValue is int || attributeValue is double)
+            {
+                if (Convert(attributeValue, out T convertedValue))
+                    return convertedValue.CompareTo(ConditionValue) > 0;
+            }
 
             return null;
         }

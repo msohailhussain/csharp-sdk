@@ -16,21 +16,8 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class ExactMatcher<T> : IAttributeMatcher<T>
+    public interface IMatcher
     {
-        T ConditionValue;
-
-        public ExactMatcher(T conditionValue)
-        {
-            ConditionValue = conditionValue;
-        }
-
-        public override bool? Eval(object attributeValue)
-        {
-            if (Convert(attributeValue, out T convertedValue))
-                return ConditionValue.Equals(convertedValue);
-
-            return null;
-        }
+        bool? Eval(object attributeValue);
     }
 }

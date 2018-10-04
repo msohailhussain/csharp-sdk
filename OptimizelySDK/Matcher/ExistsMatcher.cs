@@ -16,9 +16,14 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class ExistsMatcher : AttributeMatcher
+    public class ExistsMatcher : IAttributeMatcher<object>
     {
-        public ExistsMatcher(object conditionValue) : base(conditionValue) { }
+        object ConditionValue;
+
+        public ExistsMatcher(object conditionValue)
+        {
+            ConditionValue = conditionValue;
+        }
 
         public override bool? Eval(object attributeValue)
         {

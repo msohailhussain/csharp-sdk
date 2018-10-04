@@ -16,19 +16,19 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class ExactMatcher<T> : IAttributeMatcher<T>
+    public class SubstringMatcher : IAttributeMatcher<string>
     {
-        T ConditionValue;
+        string ConditionValue;
 
-        public ExactMatcher(T conditionValue)
+        public SubstringMatcher(string conditionValue)
         {
             ConditionValue = conditionValue;
         }
 
         public override bool? Eval(object attributeValue)
         {
-            if (Convert(attributeValue, out T convertedValue))
-                return ConditionValue.Equals(convertedValue);
+            if (Convert(attributeValue, out string convertedValue))
+                return ConditionValue.Contains(convertedValue);
 
             return null;
         }

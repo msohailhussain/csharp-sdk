@@ -50,7 +50,6 @@
         <Compile Include="..\OptimizelySDK\Utils\ConfigParser.cs" />
         <Compile Include="..\OptimizelySDK\Utils\Schema.cs" />
 		<Compile Include="..\OptimizelySDK\Utils\ControlAttributes.cs" />
-
         <Compile Include="..\OptimizelySDK\Bucketing\Bucketer.cs" />
         <Compile Include="..\OptimizelySDK\Bucketing\Decision.cs" />
         <Compile Include="..\OptimizelySDK\Bucketing\DecisionService.cs" />
@@ -58,7 +57,15 @@
         <Compile Include="..\OptimizelySDK\Bucketing\UserProfileService.cs" />
         <Compile Include="..\OptimizelySDK\Bucketing\UserProfileUtil.cs" />
 		<Compile Include="..\OptimizelySDK\Utils\ExperimentUtils.cs" />
-        
+        <Compile Include="..\OptimizelySDK\Matcher\AttributeMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\DefaultMatcherForLegacyAttributes.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\ExactMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\ExistsMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\GTMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\IMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\LTMatcher.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\MatcherType.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\SubstringMatcher.cs" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\OptimizelySDK\Utils\schema.json">
