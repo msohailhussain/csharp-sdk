@@ -42,24 +42,55 @@ namespace OptimizelySDK.Utils
         /// String constant representing custome attribute condition type.
         /// </summary>
         const string CUSTOM_ATTRIBUTE_CONDITION_TYPE = "custom_attribute";
-        
+
+        /// <summary>
+        /// Evaluates an array of conditions as if the evaluator had been applied
+        /// to each entry and the results AND-ed together.
+        /// </summary>
+        /// <param name="conditions">Array of conditions ex: [operand_1, operand_2]</param>
+        /// <param name="userAttributes">Hash representing user attributes</param>
+        /// <returns>true/false if the user attributes match/don't match the given conditions,
+        /// null if the user attributes and conditions can't be evaluated</returns>
         private bool? AndEvaluator(JArray conditions, UserAttributes userAttributes)
         {
-            // According to the matrix where:
+            // According to the matrix:
             // false and true is false
             // false and null is false
             // true and null is null.
             // true and false is false
             // true and true is true
             // null and null is null
-            if (conditions.Any(condition => Evaluate(condition, userAttributes) == false))
-                return false;
-            else if (conditions.Any(condition => Evaluate(conditions, userAttributes) == null))
+            var foundNull = false;
+            foreach(var condition in conditions)
+            {
+                var result = Evaluate(condition, userAttributes);
+                if (result == null)
+                    foundNull = true;
+                else if (result == false)
+                    return false;
+            }
+
+            if (foundNull)
                 return null;
-            else
-                return true;
+
+            return true;
+
+            //if (conditions.Any(condition => Evaluate(condition, userAttributes) == false))
+            //    return false;
+            //else if (conditions.Any(condition => Evaluate(conditions, userAttributes) == null))
+            //    return null;
+            //else
+            //    return true;
         }
 
+        /// <summary>
+        /// Evaluates an array of conditions as if the evaluator had been applied
+        /// to each entry and the results OR-ed together.
+        /// </summary>
+        /// <param name="conditions">Array of conditions ex: [operand_1, operand_2]</param>
+        /// <param name="userAttributes">Hash representing user attributes</param>
+        /// <returns>true/false if the user attributes match/don't match the given conditions,
+        /// null if the user attributes and conditions can't be evaluated</returns>
         private bool? OrEvaluator(JArray conditions, UserAttributes userAttributes)
         {
             // According to the matrix:
@@ -67,14 +98,37 @@ namespace OptimizelySDK.Utils
             // false or null is null
             // false or false is false
             // null or null is null
-            if (conditions.Any(condition => Evaluate(condition, userAttributes) == true))
-                return true;
-            else if (conditions.Any(condition => Evaluate(condition, userAttributes) == null))
+            var foundNull = false;
+            foreach (var condition in conditions)
+            {
+                var result = Evaluate(condition, userAttributes);
+                if (result == null)
+                    foundNull = true;
+                else if (result == true)
+                    return true;
+            }
+
+            if (foundNull)
                 return null;
-            else
-                return true;
+
+            return false;
+
+            //if (conditions.Any(condition => Evaluate(condition, userAttributes) == true))
+            //    return true;
+            //else if (conditions.Any(condition => Evaluate(condition, userAttributes) == null))
+            //    return null;
+            //else
+            //    return true;
         }
 
+        /// <summary>
+        /// Evaluates an array of conditions as if the evaluator had been applied
+        /// to a single entry and NOT was applied to the result.
+        /// </summary>
+        /// <param name="conditions">Array of conditions ex: [operand_1, operand_2]</param>
+        /// <param name="userAttributes">Hash representing user attributes</param>
+        /// <returns>true/false if the user attributes match/don't match the given conditions,
+        /// null if the user attributes and conditions can't be evaluated</returns>
         private bool? NotEvaluator(JArray conditions, UserAttributes userAttributes)
         {
             if (conditions.Count == 1)
@@ -105,9 +159,13 @@ namespace OptimizelySDK.Utils
             if (conditions["type"] != null && conditions["type"].ToString() != CUSTOM_ATTRIBUTE_CONDITION_TYPE)
                 return null;
 
-            var matchType = conditions["match"].ToString();
-            var conditionValue = conditions["value"];
-            var attribute = userAttributes[conditions["name"].ToString()];
+            string matchType = conditions["match"]?.ToString();
+            var conditionValue = conditions["value"].ToObject<object>();
+            // var attribute = userAttributes[conditions["name"]?.ToString()] ?? null;
+
+            object attribute = null;
+            if (userAttributes != null && userAttributes.ContainsKey(conditions["name"]?.ToString()))
+                attribute = userAttributes[conditions["name"]?.ToString()];
 
             return MatcherType.GetMatcher(matchType, conditionValue)?.Eval(attribute);
         }
