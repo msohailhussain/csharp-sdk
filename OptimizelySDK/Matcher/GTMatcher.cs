@@ -29,7 +29,7 @@ namespace OptimizelySDK.Matcher
 
         public override bool? Eval(object attributeValue)
         {
-            if (attributeValue is int || attributeValue is double)
+            if (attributeValue is int || attributeValue is long || attributeValue is float || attributeValue is double)
             {
                 if (Convert(attributeValue, out T convertedValue))
                     return convertedValue.CompareTo(ConditionValue) > 0;

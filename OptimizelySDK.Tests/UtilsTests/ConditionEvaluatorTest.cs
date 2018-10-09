@@ -16,6 +16,7 @@
 using NUnit.Framework;
 using OptimizelySDK.Entity;
 using OptimizelySDK.Utils;
+using System.Collections.Generic;
 
 namespace OptimizelySDK.Tests.UtilsTests
 {
@@ -24,7 +25,35 @@ namespace OptimizelySDK.Tests.UtilsTests
     {
         private ConditionEvaluator ConditionEvaluator = null;
         private object[] Conditions = null;
+        private object[] AndConditions = null;
+        private object[] OrConditions = null;
+        private object[] NotCondition = null;
+
+        private object[] ExistsCondition = null;
+        private object[] ExactStrCondition = null;
+        private object[] ExactBoolCondition = null;
+        private object[] ExactDecimalCondition = null;
+        private object[] ExactIntCondition = null;
+
         private const string ConditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone""}]], [""or"", [""or"", {""name"": ""location"", ""type"": ""custom_attribute"", ""value"": ""San Francisco""}]], [""or"", [""not"", [""or"", {""name"": ""browser"", ""type"": ""custom_attribute"", ""value"": ""Firefox""}]]]]";
+        private const string NotConditionStr = @"[""not"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""exact""}]]]";
+        private const string AndConditionStr = @"[""and"", 
+                                                    [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
+                                                    [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
+                                                    [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
+                                                 ]";
+        private const string OrConditionStr = @"[""or"", 
+                                                    [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
+                                                    [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
+                                                    [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
+                                                 ]";
+
+        private const string ExistsConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""match"": ""exists""}]]]";
+
+        private const string ExactStrConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": ""firefox"", ""match"": ""exact""}]]]";
+        private const string ExactBoolConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": false, ""match"": ""exact""}]]]";
+        private const string ExactDecimalConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 1.5, ""match"": ""exact""}]]]";
+        private const string ExactIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""exact""}]]]";
 
         [TestFixtureSetUp]
         public void Initialize()
@@ -32,12 +61,23 @@ namespace OptimizelySDK.Tests.UtilsTests
             ConditionEvaluator = new ConditionEvaluator();
 
             Conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ConditionsStr);
+            AndConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(AndConditionStr);
+            OrConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(OrConditionStr);
+            NotCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(NotConditionStr);
+
+            ExistsCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExistsConditionStr);
+
+            ExactStrCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactStrConditionStr);
+            ExactBoolCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactBoolConditionStr);
+            ExactDecimalCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactDecimalConditionStr);
+            ExactIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactIntConditionStr);
         }
 
         [TestFixtureTearDown]
         public void TestCleanUp()
         {
             Conditions = null;
+            AndConditions = null;
             ConditionEvaluator = null;
         }
 
@@ -51,7 +91,7 @@ namespace OptimizelySDK.Tests.UtilsTests
                 {"browser", "Chrome" }
             };
 
-            Assert.IsTrue(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.True);
         }
 
         [Test]
@@ -64,7 +104,7 @@ namespace OptimizelySDK.Tests.UtilsTests
                 {"browser", "Firefox" }
             };
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.False);
         }
 
         [Test]
@@ -72,7 +112,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes();
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.False);
         }
 
         [Test]
@@ -80,23 +120,268 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             UserAttributes userAttributes = null;
 
-            Assert.IsFalse(ConditionEvaluator.Evaluate(Conditions, userAttributes).GetValueOrDefault());
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.False);
         }
 
         [Test]
-        public void TestTypedUserAttributesEvaluateFalseWhenMatchTypeIsNotProvided()
+        public void TestTypedUserAttributesEvaluateTrue()
         {
             var userAttributes = new UserAttributes
             {
                 {"device_type", "iPhone" },
-                {"is_firefox", false },
                 {"num_users", 15 },
-                {"pi_value", 3.14 }
+                {"decimal_value", 3.15678 }
             };
 
-            string typedConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone""}]], [""or"", [""or"", {""name"": ""is_firefox"", ""type"": ""custom_attribute"", ""value"": false}]], [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15}]], [""or"", [""or"", {""name"": ""pi_value"", ""type"": ""custom_attribute"", ""value"": 3.14}]]]";
-            var typedConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(typedConditionStr);
-            Assert.False(ConditionEvaluator.Evaluate(typedConditions, userAttributes).GetValueOrDefault());
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, userAttributes), Is.True);
         }
+
+        #region Invalid input Tests
+
+        [Test]
+        public void TestEvaluateReturnsNullWithInvalidConditionType()
+        {
+            var conditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""invalid"", ""value"": ""iPhone"", ""match"": ""exact""}]]]";
+            var conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(conditionsStr);
+
+            Assert.Null(ConditionEvaluator.Evaluate(conditions, new UserAttributes { { "device_type", "iPhone" } }));
+        }
+
+        [Test]
+        public void TestEvaluateReturnsNullWithInvalidMatchType()
+        {
+            var conditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""invalid""}]]]";
+            var conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(conditionsStr);
+
+            Assert.Null(ConditionEvaluator.Evaluate(conditions, new UserAttributes { {"device_type", "iPhone" } }));
+        }
+
+        [Test]
+        public void TestEvaluateReturnsNullWithMismatchMatcherType()
+        {
+            var conditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""is_firefox"", ""type"": ""custom_attribute"", ""value"": false, ""match"": ""substring""}]]]";
+            var conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(conditionsStr);
+
+            Assert.Null(ConditionEvaluator.Evaluate(conditions, new UserAttributes { { "is_firefox", false } }));
+        }
+
+        #endregion // Invalid input Tests
+
+        #region AND condition Tests
+
+        [Test]
+        public void TestAndEvaluatorReturnsNullWhenAllOperandsReturnNull()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", 15 },
+                {"num_users", "test" },
+                {"decimal_value", false }
+            };
+            
+            Assert.Null(ConditionEvaluator.Evaluate(AndConditions, userAttributes));
+        }
+
+        [Test]
+        public void TestAndEvaluatorReturnsNullWhenOperandsEvaluateToTruesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "hone" },
+                {"num_users", 15 },
+                {"decimal_value", false } // This evaluates to null.
+            };
+
+            Assert.Null(ConditionEvaluator.Evaluate(AndConditions, userAttributes));
+        }
+
+        [Test]
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalsesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Android" }, // Evaluates to false.
+                {"num_users", 20 }, // Evaluates to false.
+                {"decimal_value", false } // Evaluates to null.
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, userAttributes), Is.False);
+        }
+
+        [Test]
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalsesTruesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Phone" }, // Evaluates to true.
+                {"num_users", 20 }, // Evaluates to false.
+                {"decimal_value", false } // Evaluates to null.
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, userAttributes), Is.False);
+        }
+
+        [Test]
+        public void TestAndEvaluatorReturnsTrueWhenAllOperandsEvaluateToTrue()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Phone" },
+                {"num_users", 15 },
+                {"decimal_value", 3.1567 }
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, userAttributes), Is.True);
+        }
+
+        #endregion // AND condition Tests
+
+        #region OR condition Tests
+
+        [Test]
+        public void TestOrEvaluatorReturnsNullWhenAllOperandsReturnNull()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", 15 },
+                {"num_users", "test" },
+                {"decimal_value", false }
+            };
+
+            Assert.Null(ConditionEvaluator.Evaluate(OrConditions, userAttributes));
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsTrueWhenOperandsEvaluateToTruesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "hone" }, // Evaluates to true.
+                {"num_users", 15 },
+                {"decimal_value", false } // Evaluates to null.
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, userAttributes), Is.True);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsNullWhenOperandsEvaluateToFalsesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Android" }, // Evaluates to false.
+                {"num_users", 20 }, // Evaluates to false.
+                {"decimal_value", false } // Evaluates to null.
+            };
+
+            Assert.Null(ConditionEvaluator.Evaluate(OrConditions, userAttributes));
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsTrueWhenOperandsEvaluateToFalsesTruesAndNulls()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Phone" }, // Evaluates to true.
+                {"num_users", 20 }, // Evaluates to false.
+                {"decimal_value", false } // Evaluates to null.
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, userAttributes), Is.True);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsFalseWhenAllOperandsEvaluateToFalse()
+        {
+            var userAttributes = new UserAttributes
+            {
+                {"device_type", "Android" },
+                {"num_users", 17 },
+                {"decimal_value", 3.12 }
+            };
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, userAttributes), Is.False);
+        }
+
+        #endregion // OR condition Tests
+
+        #region NOT condition Tests
+
+        [Test]
+        public void TestNotEvaluatorReturnsNullWhenOperandEvaluateToNull()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(NotCondition, new UserAttributes { { "device_type", 123 } }));
+        }
+
+        [Test]
+        public void TestNotEvaluatorReturnsTrueWhenOperandEvaluateToFalse()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(NotCondition, new UserAttributes { { "device_type", "Android" } }), Is.True);
+        }
+
+        [Test]
+        public void TestNotEvaluatorReturnsFalseWhenOperandEvaluateToTrue()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(NotCondition, new UserAttributes { { "device_type", "iPhone" } }), Is.False);
+        }
+
+        #endregion // NOT condition Tests
+
+        #region ExistsMatcher Tests
+
+        [Test]
+        public void TestExistsMatcherReturnsFalseWhenAttributeIsNotProvided()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { }), Is.False);
+        }
+
+        [Test]
+        public void TestExistsMatcherReturnsFalseWhenAttributeIsNull()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", null } }), Is.False);
+        }
+
+        [Test]
+        public void TestExistsMatcherReturnsTrueWhenAttributeValueIsProvided()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", "" } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", "iPhone" } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", 10.5} }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExistsCondition, new UserAttributes { { "attr_value", false } }), Is.True);
+        }
+
+        #endregion // ExistsMatcher Tests
+
+        #region ExactMatcher Tests
+
+        [Test]
+        public void TestExactMatcherReturnsFalseWhenAttributeValueDoesNotMatch()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "chrome" } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", true } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 2.5f } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 55 } }), Is.False);
+        }
+
+        [Test]
+        public void TestExactMatcherReturnsNullWhenTypeMismatch()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.55 } }));
+        }
+
+        [Test]
+        public void TestExactMatcherReturnsTrueWhenAttributeValueMatches()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", false } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 1.5f } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
+        }
+
+        #endregion // ExactMatcher Tests
     }
 }

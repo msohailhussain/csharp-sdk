@@ -99,11 +99,11 @@
     <Compile Include="Matcher\AttributeMatcher.cs" />
     <Compile Include="Matcher\DefaultMatcherForLegacyAttributes.cs" />
     <Compile Include="Matcher\ExactMatcher.cs" />
-	<Compile Include="Matcher\ExistsMatcher.cs" />
+    <Compile Include="Matcher\ExistsMatcher.cs" />
     <Compile Include="Matcher\GTMatcher.cs" />
     <Compile Include="Matcher\IMatcher.cs" />
     <Compile Include="Matcher\LTMatcher.cs" />
-    <Compile Include="Matcher\MatcherType.cs" />
+    <Compile Include="Matcher\MatchType.cs" />
     <Compile Include="Matcher\SubstringMatcher.cs" />
     <Compile Include="Notifications\NotificationCenter.cs" />
     <Compile Include="Optimizely.cs" />

@@ -27,8 +27,8 @@ namespace OptimizelySDK.Matcher
 
         public override bool? Eval(object attributeValue)
         {
-            if (Convert(attributeValue, out T convertedValue))
-                return ConditionValue.Equals(convertedValue);
+            if (ConditionValue.GetType() == attributeValue.GetType())
+                return ConditionValue.Equals(attributeValue);
 
             return null;
         }

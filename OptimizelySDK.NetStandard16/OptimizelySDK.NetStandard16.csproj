@@ -64,7 +64,7 @@
 		<Compile Include="..\OptimizelySDK\Matcher\GTMatcher.cs" />
 		<Compile Include="..\OptimizelySDK\Matcher\IMatcher.cs" />
 		<Compile Include="..\OptimizelySDK\Matcher\LTMatcher.cs" />
-		<Compile Include="..\OptimizelySDK\Matcher\MatcherType.cs" />
+		<Compile Include="..\OptimizelySDK\Matcher\MatchType.cs" />
 		<Compile Include="..\OptimizelySDK\Matcher\SubstringMatcher.cs" />
     </ItemGroup>
     <ItemGroup>

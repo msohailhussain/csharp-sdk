@@ -210,8 +210,8 @@
 	<Compile Include="..\OptimizelySDK\Matcher\LTMatcher.cs">
       <Link>Matcher\LTMatcher.cs</Link>
     </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\MatcherType.cs">
-      <Link>Matcher\MatcherType.cs</Link>
+	<Compile Include="..\OptimizelySDK\Matcher\MatchType.cs">
+      <Link>Matcher\MatchType.cs</Link>
     </Compile>
 	<Compile Include="..\OptimizelySDK\Matcher\SubstringMatcher.cs">
       <Link>Matcher\SubstringMatcher.cs</Link>

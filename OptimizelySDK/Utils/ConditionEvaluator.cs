@@ -160,14 +160,13 @@ namespace OptimizelySDK.Utils
                 return null;
 
             string matchType = conditions["match"]?.ToString();
-            var conditionValue = conditions["value"].ToObject<object>();
-            // var attribute = userAttributes[conditions["name"]?.ToString()] ?? null;
+            var conditionValue = conditions["value"]?.ToObject<object>();
+            
+            object attributeValue = null;
+            if (userAttributes != null && userAttributes.ContainsKey(conditions["name"].ToString()))
+                attributeValue = userAttributes[conditions["name"].ToString()];
 
-            object attribute = null;
-            if (userAttributes != null && userAttributes.ContainsKey(conditions["name"]?.ToString()))
-                attribute = userAttributes[conditions["name"]?.ToString()];
-
-            return MatcherType.GetMatcher(matchType, conditionValue)?.Eval(attribute);
+            return MatchType.GetMatcher(matchType, conditionValue)?.Eval(attributeValue);
         }
 
         public bool? Evaluate(object[] conditions, UserAttributes userAttributes)
@@ -186,29 +185,5 @@ namespace OptimizelySDK.Utils
         {
             return JToken.Parse(conditions);
         }
-
-        //private bool CompareValues(object attribute, JToken condition)
-        //{
-        //    try
-        //    {
-        //        switch (condition.Type)
-        //        {
-        //            case JTokenType.Integer:
-        //                return (int)condition == Convert.ToInt32(attribute);
-        //            case JTokenType.Float:
-        //                return (double)condition == Convert.ToDouble(attribute);
-        //            case JTokenType.String:
-        //                return (string)condition == Convert.ToString(attribute);
-        //            case JTokenType.Boolean:
-        //                return (bool)condition == Convert.ToBoolean(attribute);
-        //            default:
-        //                return false;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
     }
 }
