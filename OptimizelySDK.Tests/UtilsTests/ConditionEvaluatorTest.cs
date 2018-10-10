@@ -25,6 +25,7 @@ namespace OptimizelySDK.Tests.UtilsTests
     {
         private ConditionEvaluator ConditionEvaluator = null;
         private object[] Conditions = null;
+
         private object[] AndConditions = null;
         private object[] OrConditions = null;
         private object[] NotCondition = null;
@@ -32,55 +33,60 @@ namespace OptimizelySDK.Tests.UtilsTests
         private object[] ExistsCondition = null;
         private object[] SubstrCondition = null;
         private object[] GTCondition = null;
+        private object[] LTCondition = null;
+
         private object[] ExactStrCondition = null;
         private object[] ExactBoolCondition = null;
         private object[] ExactDecimalCondition = null;
         private object[] ExactIntCondition = null;
 
-        private const string ConditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone""}]], [""or"", [""or"", {""name"": ""location"", ""type"": ""custom_attribute"", ""value"": ""San Francisco""}]], [""or"", [""not"", [""or"", {""name"": ""browser"", ""type"": ""custom_attribute"", ""value"": ""Firefox""}]]]]";
-        private const string NotConditionStr = @"[""not"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""exact""}]]]";
-        private const string AndConditionStr = @"[""and"", 
-                                                    [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
-                                                    [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
-                                                    [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
-                                                 ]";
-        private const string OrConditionStr = @"[""or"", 
-                                                    [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
-                                                    [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
-                                                    [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
-                                                 ]";
-
-        private const string ExistsConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""match"": ""exists""}]]]";
-
-        private const string SubstrConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": ""firefox"", ""match"": ""substring""}]]]";
-
-        private const string GTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""gt""}]]]";
-
-        private const string ExactStrConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": ""firefox"", ""match"": ""exact""}]]]";
-        private const string ExactBoolConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": false, ""match"": ""exact""}]]]";
-        private const string ExactDecimalConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 1.5, ""match"": ""exact""}]]]";
-        private const string ExactIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""exact""}]]]";
-
         [TestFixtureSetUp]
         public void Initialize()
         {
-            ConditionEvaluator = new ConditionEvaluator();
+            string ConditionsStr = @"[""and"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone""}]], [""or"", [""or"", {""name"": ""location"", ""type"": ""custom_attribute"", ""value"": ""San Francisco""}]], [""or"", [""not"", [""or"", {""name"": ""browser"", ""type"": ""custom_attribute"", ""value"": ""Firefox""}]]]]";
 
+            string NotConditionStr = @"[""not"", [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""exact""}]]]";
+            string AndConditionStr = @"[""and"", 
+                                        [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
+                                        [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
+                                        [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
+                                       ]";
+            string OrConditionStr = @"[""or"", 
+                                        [""or"", [""or"", {""name"": ""device_type"", ""type"": ""custom_attribute"", ""value"": ""iPhone"", ""match"": ""substring""}]], 
+                                        [""or"", [""or"", {""name"": ""num_users"", ""type"": ""custom_attribute"", ""value"": 15, ""match"": ""exact""}]], 
+                                        [""or"", [""or"", {""name"": ""decimal_value"", ""type"": ""custom_attribute"", ""value"": 3.14, ""match"": ""gt""}]]
+                                      ]";
+
+            string ExactStrConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": ""firefox"", ""match"": ""exact""}]]]";
+            string ExactBoolConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": false, ""match"": ""exact""}]]]";
+            string ExactDecimalConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 1.5, ""match"": ""exact""}]]]";
+            string ExactIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""exact""}]]]";
+
+            string ExistsConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""match"": ""exists""}]]]";
+
+            string SubstrConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": ""firefox"", ""match"": ""substring""}]]]";
+
+            string GTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""gt""}]]]";
+            string LTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""lt""}]]]";
+
+            ConditionEvaluator = new ConditionEvaluator();
             Conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ConditionsStr);
+
             AndConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(AndConditionStr);
             OrConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(OrConditionStr);
             NotCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(NotConditionStr);
+
+            ExactStrCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactStrConditionStr);
+            ExactBoolCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactBoolConditionStr);
+            ExactDecimalCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactDecimalConditionStr);
+            ExactIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactIntConditionStr);
 
             ExistsCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExistsConditionStr);
 
             SubstrCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(SubstrConditionStr);
 
             GTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(GTConditionStr);
-
-            ExactStrCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactStrConditionStr);
-            ExactBoolCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactBoolConditionStr);
-            ExactDecimalCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactDecimalConditionStr);
-            ExactIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactIntConditionStr);
+            LTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(LTConditionStr);
         }
 
         [TestFixtureTearDown]
@@ -337,6 +343,37 @@ namespace OptimizelySDK.Tests.UtilsTests
 
         #endregion // NOT condition Tests
 
+        #region ExactMatcher Tests
+
+        [Test]
+        public void TestExactMatcherReturnsFalseWhenAttributeValueDoesNotMatch()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "chrome" } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", true } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 2.5 } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 55 } }), Is.False);
+        }
+
+        [Test]
+        public void TestExactMatcherReturnsNullWhenTypeMismatch()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.55 } }));
+        }
+
+        [Test]
+        public void TestExactMatcherReturnsTrueWhenAttributeValueMatches()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", false } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 1.5 } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
+        }
+
+        #endregion // ExactMatcher Tests
+
         #region ExistsMatcher Tests
 
         [Test]
@@ -363,37 +400,6 @@ namespace OptimizelySDK.Tests.UtilsTests
 
         #endregion // ExistsMatcher Tests
 
-        #region ExactMatcher Tests
-
-        [Test]
-        public void TestExactMatcherReturnsFalseWhenAttributeValueDoesNotMatch()
-        {
-            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "chrome" } }), Is.False);
-            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", true } }), Is.False);
-            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 2.5f } }), Is.False);
-            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 55 } }), Is.False);
-        }
-
-        [Test]
-        public void TestExactMatcherReturnsNullWhenTypeMismatch()
-        {
-            Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
-            Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
-            Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
-            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.55 } }));
-        }
-
-        [Test]
-        public void TestExactMatcherReturnsTrueWhenAttributeValueMatches()
-        {
-            Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
-            Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", false } }), Is.True);
-            Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 1.5f } }), Is.True);
-            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
-        }
-
-        #endregion // ExactMatcher Tests
-
         #region SubstringMatcher Tests
 
         [Test]
@@ -417,27 +423,50 @@ namespace OptimizelySDK.Tests.UtilsTests
 
         #endregion // SubstringMatcher Tests
 
-        //#region GTMatcher Tests
+        #region GTMatcher Tests
 
-        //[Test]
-        //public void TestGTMatcherReturnsFalseWhenAttributeValueIsLessThanConditionValue()
-        //{
-        //    Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 5 } }), Is.False);
-        //    Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 10 } }), Is.False);
-        //}
+        [Test]
+        public void TestGTMatcherReturnsFalseWhenAttributeValueIsLessThanOrEqualToConditionValue()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 5 } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 10 } }), Is.False);
+        }
 
-        //[Test]
-        //public void TestGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue()
-        //{
-        //    Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 15 } }), Is.True);
-        //}
+        [Test]
+        public void TestGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", "invalid" } }));
+        }
 
-        //[Test]
-        //public void TestGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
-        //{
-        //    Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", "invalid" } }));
-        //}
+        [Test]
+        public void TestGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 15 } }), Is.True);
+        }
 
-        //#endregion // GTMatcher Tests
+        #endregion // GTMatcher Tests
+
+        #region LTMatcher Tests
+
+        [Test]
+        public void TestLTMatcherReturnsFalseWhenAttributeValueIsGreaterThanOrEqualToConditionValue()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", 15 } }), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", 10 } }), Is.False);
+        }
+
+        [Test]
+        public void TestLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", "invalid" } }));
+        }
+
+        [Test]
+        public void TestLTMatcherReturnsTrueWhenAttributeValueIsLessThanConditionValue()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", 5 } }), Is.True);
+        }
+
+        #endregion // LTMatcher Tests
     }
 }
