@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OptimizelySDK.Entity;
 using OptimizelySDK.Matcher;
+using System;
 using System.Linq;
 
 namespace OptimizelySDK.Utils
@@ -74,13 +75,6 @@ namespace OptimizelySDK.Utils
                 return null;
 
             return true;
-
-            //if (conditions.Any(condition => Evaluate(condition, userAttributes) == false))
-            //    return false;
-            //else if (conditions.Any(condition => Evaluate(conditions, userAttributes) == null))
-            //    return null;
-            //else
-            //    return true;
         }
 
         /// <summary>
@@ -112,13 +106,6 @@ namespace OptimizelySDK.Utils
                 return null;
 
             return false;
-
-            //if (conditions.Any(condition => Evaluate(condition, userAttributes) == true))
-            //    return true;
-            //else if (conditions.Any(condition => Evaluate(condition, userAttributes) == null))
-            //    return null;
-            //else
-            //    return true;
         }
 
         /// <summary>
@@ -164,7 +151,13 @@ namespace OptimizelySDK.Utils
             
             object attributeValue = null;
             if (userAttributes != null && userAttributes.ContainsKey(conditions["name"].ToString()))
+            {
                 attributeValue = userAttributes[conditions["name"].ToString()];
+                
+                // Newtonsoft.JSON converts int value to long. And exact matcher expect types to be the same.
+                // This conversion enable us to pass that scenario.
+                attributeValue = attributeValue is int ? Convert.ToInt64(attributeValue) : attributeValue;
+            }
 
             return MatchType.GetMatcher(matchType, conditionValue)?.Eval(attributeValue);
         }

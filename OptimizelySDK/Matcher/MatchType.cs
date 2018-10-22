@@ -41,15 +41,7 @@ namespace OptimizelySDK.Matcher
                     else if (conditionValue is bool)
                         return new ExactMatcher<bool>((bool)conditionValue);
                     else if (conditionValue is int || conditionValue is long)
-                    {
-                        // Fitering int and long types, as Json.NET by default reads int values as long.
-                        // Otherwise, it fails ExactMatcher type checking.
-                        long value = (long)conditionValue;
-                        if (value < int.MinValue || value > int.MaxValue)
-                            return new ExactMatcher<long>(value);
-                        else
-                            return new ExactMatcher<int>((int)value);
-                    }
+                        return new ExactMatcher<long>((long)conditionValue);
                     break;
                 case AttributeMatchTypes.EXIST:
                     return new ExistsMatcher(conditionValue);
@@ -57,29 +49,13 @@ namespace OptimizelySDK.Matcher
                     if (conditionValue is float || conditionValue is double)
                         return new GTMatcher<double>((double)conditionValue);
                     else if (conditionValue is int || conditionValue is long)
-                    {
-                        // Fitering int and long types, as Json.NET by default reads int values as long.
-                        // Otherwise, it fails type conversion.
-                        long value = (long)conditionValue;
-                        if (value < int.MinValue || value > int.MaxValue)
-                            return new GTMatcher<long>(value);
-                        else
-                            return new GTMatcher<int>((int)value);
-                    }
+                        return new GTMatcher<long>((long)conditionValue);
                     break;
                 case AttributeMatchTypes.LESS_THAN:
                     if (conditionValue is float || conditionValue is double)
                         return new LTMatcher<double>((double)conditionValue);
                     else if (conditionValue is int || conditionValue is long)
-                    {
-                        // Fitering int and long types, as Json.NET by default reads int values as long.
-                        // Otherwise, it fails type conversion.
-                        long value = (long)conditionValue;
-                        if (value < int.MinValue || value > int.MaxValue)
-                            return new LTMatcher<long>(value);
-                        else
-                            return new LTMatcher<int>((int)value);
-                    }
+                        return new LTMatcher<long>((long)conditionValue);
                     break;
                 case AttributeMatchTypes.SUBSTRING:
                     if (conditionValue is string)
