@@ -40,6 +40,8 @@ namespace OptimizelySDK.Tests.UtilsTests
         private object[] ExactDecimalCondition = null;
         private object[] ExactIntCondition = null;
 
+        private object[] InfinityIntCondition = null;
+
         [TestFixtureSetUp]
         public void Initialize()
         {
@@ -69,6 +71,8 @@ namespace OptimizelySDK.Tests.UtilsTests
             string GTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""gt""}]]]";
             string LTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""lt""}]]]";
 
+            string InfinityIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 9223372036854775807, ""match"": ""exact""}]]]";
+
             ConditionEvaluator = new ConditionEvaluator();
             Conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ConditionsStr);
 
@@ -87,6 +91,8 @@ namespace OptimizelySDK.Tests.UtilsTests
 
             GTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(GTConditionStr);
             LTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(LTConditionStr);
+
+            InfinityIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(InfinityIntConditionStr);
         }
 
         [TestFixtureTearDown]
@@ -364,6 +370,13 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
+        public void TestExactMatcherReturnsNullWithNumericInfinity()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } })); // Infinity value
+            Assert.Null(ConditionEvaluator.Evaluate(InfinityIntCondition, new UserAttributes { { "attr_value", 15 } })); // Infinity condition
+        }
+
+        [Test]
         public void TestExactMatcherReturnsTrueWhenAttributeValueMatches()
         {
             Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
@@ -439,6 +452,13 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
+        public void TestGTMatcherReturnsNullWhenAttributeValueIsInfinity()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", double.PositiveInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 9223372036854775807 } })); // Int infinity
+        }
+
+        [Test]
         public void TestGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue()
         {
             Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 15 } }), Is.True);
@@ -459,6 +479,13 @@ namespace OptimizelySDK.Tests.UtilsTests
         public void TestLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
         {
             Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", "invalid" } }));
+        }
+
+        [Test]
+        public void TestLTMatcherReturnsNullWhenAttributeValueIsInfinity()
+        {
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", 9223372036854775807 } })); // Int infinity
         }
 
         [Test]
