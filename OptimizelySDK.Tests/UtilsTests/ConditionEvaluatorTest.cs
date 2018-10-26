@@ -209,7 +209,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes
             {
-                {"device_type", "hone" },
+                {"device_type", "my iPhone" },
                 {"num_users", 15 },
                 {"decimal_value", false } // This evaluates to null.
             };
@@ -248,7 +248,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes
             {
-                {"device_type", "Phone" },
+                {"device_type", "iPhone X" },
                 {"num_users", 15 },
                 {"decimal_value", 3.1567 }
             };
@@ -304,7 +304,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes
             {
-                {"device_type", "Phone" }, // Evaluates to true.
+                {"device_type", "iPhone file explorer" }, // Evaluates to true.
                 {"num_users", 20 }, // Evaluates to false.
                 {"decimal_value", false } // Evaluates to null.
             };
@@ -425,7 +425,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         public void TestSubstringMatcherReturnsTrueWhenAttributeValueIsASubstring()
         {
             Assert.That(ConditionEvaluator.Evaluate(SubstrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
-            Assert.That(ConditionEvaluator.Evaluate(SubstrCondition, new UserAttributes { { "attr_value", "efo" } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(SubstrCondition, new UserAttributes { { "attr_value", "chrome vs firefox" } }), Is.True);
         }
 
         [Test]

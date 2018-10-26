@@ -51,6 +51,7 @@ namespace OptimizelySDK.Tests
         private Variation VariationWithKeyControl;
         private Variation VariationWithKeyVariation;
         private Variation GroupVariation;
+        private Optimizely OptimizelyTypedAudience;
 
         #region Test Life Cycle
         [SetUp]
@@ -77,6 +78,7 @@ namespace OptimizelySDK.Tests
 
             EventDispatcherMock = new Mock<IEventDispatcher>();
             Optimizely = new Optimizely(TestData.Datafile, EventDispatcherMock.Object, LoggerMock.Object, ErrorHandlerMock.Object);
+            OptimizelyTypedAudience = new Optimizely(TestData.TypedAudienceDatafile, EventDispatcherMock.Object, LoggerMock.Object, ErrorHandlerMock.Object);
 
             Helper = new OptimizelyHelper
             {
@@ -1941,5 +1943,121 @@ namespace OptimizelySDK.Tests
         }
 
         #endregion // Test ValidateStringInputs
+
+        #region Test Audience Match Types
+
+        [Test]
+        public void TestActivateWithTypedAudiences()
+        {
+            var variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
+            {
+                { "house", "Gryffindor" }
+            });
+
+            Assert.AreEqual("A", variation.Key);
+            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Once);
+
+            variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
+            {
+                { "lasers", 45.5 }
+            });
+
+            Assert.AreEqual("A", variation.Key);
+            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Exactly(2));
+        }
+
+        [Test]
+        public void TestActivateExcludeUserFromExperimentWithTypedAudiences()
+        {
+            var variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
+            {
+                { "house", "Hufflepuff" }
+            });
+
+            Assert.Null(variation);
+            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Never);
+        }
+
+        [Test]
+        public void TestTrackWithTypedAudiences()
+        {
+            //LogEvent logEventSpy = null;
+            //EventDispatcherMock.Setup(ed => ed.DispatchEvent(It.IsAny<LogEvent>()))
+            //    .Callback<LogEvent>((p) => logEventSpy = p);
+
+            OptimizelyTypedAudience.Track("item_bought", "user1", new UserAttributes
+            {
+                { "house", "Welcome to Slytherin!" }
+            });
+
+            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Once);
+        }
+
+        [Test]
+        public void TestTrackExcludeUserFromExperimentWithTypedAudiences()
+        {
+            OptimizelyTypedAudience.Track("item_bought", "user1", new UserAttributes
+            {
+                { "house", "Hufflepuff" }
+            });
+
+            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Never);
+        }
+
+        [Test]
+        public void TestIsFeatureEnabledWithTypedAudiences()
+        {
+            var featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes
+            {
+                { "favorite_ice_cream", "chocolate" }
+            });
+
+            Assert.True(featureEnabled);
+
+            featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes
+            {
+                { "lasers", 45.5 }
+            });
+
+            Assert.True(featureEnabled);
+        }
+
+        [Test]
+        public void TestIsFeatureEnabledExcludeUserFromExperimentWithTypedAudiences()
+        {
+            var featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes { });
+            Assert.False(featureEnabled);
+        }
+
+        [Test]
+        public void TestGetFeatureVariableStringReturnVariableValueWithTypedAudiences()
+        {
+            var variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
+            {
+                { "lasers", 71 }
+            });
+
+            Assert.AreEqual(variableValue, "xyz");
+
+            variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
+            {
+                { "should_do_it", true }
+            });
+
+            Assert.AreEqual(variableValue, "xyz");
+        }
+
+        [Test]
+        public void TestGetFeatureVariableStringReturnDefaultVariableValueWithTypedAudiences()
+        {
+            var variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
+            {
+                { "lasers", 50 }
+            });
+
+            Assert.AreEqual(variableValue, "x");
+        }
+
+        #endregion // Test Audience Match Types
     }
 }
