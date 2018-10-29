@@ -18,7 +18,7 @@ using System;
 
 namespace OptimizelySDK.Matcher
 {
-    public class LTMatcher<T> : IAttributeMatcher<T> where T : IComparable
+    public class LTMatcher<T> : AttributeMatcher<T> where T : IComparable
     {
         T ConditionValue;
 
@@ -29,11 +29,8 @@ namespace OptimizelySDK.Matcher
 
         public override bool? Eval(object attributeValue)
         {
-            if (attributeValue is int || attributeValue is long || attributeValue is float || attributeValue is double)
-            {
-                if (Convert(attributeValue, out T convertedValue))
-                    return convertedValue.CompareTo(ConditionValue) < 0;
-            }
+            if (IsNumericValue(attributeValue) && Convert(attributeValue, out T convertedValue))
+                return convertedValue.CompareTo(ConditionValue) < 0;
 
             return null;
         }

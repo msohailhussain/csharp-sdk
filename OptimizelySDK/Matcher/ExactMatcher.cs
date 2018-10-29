@@ -16,7 +16,7 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class ExactMatcher<T> : IAttributeMatcher<T>
+    public class ExactMatcher<T> : AttributeMatcher<T>
     {
         T ConditionValue;
 

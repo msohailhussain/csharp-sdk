@@ -18,7 +18,7 @@ using System;
 
 namespace OptimizelySDK.Matcher
 {
-    public abstract class IAttributeMatcher<T> : IMatcher
+    public abstract class AttributeMatcher<T> : IMatcher
     {
         public abstract bool? Eval(object attributeValue);
 
@@ -34,6 +34,11 @@ namespace OptimizelySDK.Matcher
                 convertedValue = default(T);
                 return false;
             }
+        }
+
+        public bool IsNumericValue(object attributeValue)
+        {
+            return attributeValue is int || attributeValue is long || attributeValue is float || attributeValue is double;
         }
     }
 }

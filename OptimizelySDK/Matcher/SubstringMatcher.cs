@@ -16,7 +16,7 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class SubstringMatcher : IAttributeMatcher<string>
+    public class SubstringMatcher : AttributeMatcher<string>
     {
         string ConditionValue;
 

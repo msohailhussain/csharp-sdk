@@ -18,7 +18,7 @@ using System;
 
 namespace OptimizelySDK.Matcher
 {
-    public class DefaultMatcherForLegacyAttributes : IAttributeMatcher<string>
+    public class DefaultMatcherForLegacyAttributes : AttributeMatcher<string>
     {
         string ConditionValue;
 

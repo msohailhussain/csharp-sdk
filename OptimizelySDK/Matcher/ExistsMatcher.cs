@@ -16,7 +16,7 @@
 
 namespace OptimizelySDK.Matcher
 {
-    public class ExistsMatcher : IAttributeMatcher<object>
+    public class ExistsMatcher : AttributeMatcher<object>
     {
         object ConditionValue;
 
