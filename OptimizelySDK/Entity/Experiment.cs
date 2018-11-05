@@ -83,7 +83,7 @@ namespace OptimizelySDK.Entity
         {
             get
             {
-                return (audienceConditionsList == null && string.IsNullOrEmpty(AudienceConditions)) ? null : (audienceConditionsList = ConditionEvaluator.DecodeConditions(AudienceConditions ?? string.Empty));
+                return (audienceConditionsList == null && string.IsNullOrEmpty(AudienceConditions)) ? null : (audienceConditionsList = ConditionTreeEvaluator.DecodeConditions(AudienceConditions ?? string.Empty));
             }
         }
 

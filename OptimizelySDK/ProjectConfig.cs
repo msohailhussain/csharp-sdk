@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OptimizelySDK.Entity;
 using OptimizelySDK.ErrorHandler;
 using OptimizelySDK.Exceptions;
@@ -626,6 +627,29 @@ namespace OptimizelySDK
             }
 
             Logger.Log(LogLevel.ERROR, $@"Attribute key ""{attributeKey}"" is not in datafile.");
+            return null;
+        }
+
+        /// <summary>
+        /// Get audience conditions for the experiment.
+        /// </summary>
+        /// <param name="experimentKey">Key for experiment</param>
+        /// <returns>Audience conditions for the experiment - can be an array of audience IDs, or a nested array of conditions
+        /// Examples: ["5", "6"], ["and", ["or", "1", "2"], "3"]</returns>
+        public JArray GetAudienceConditionsForExperiment(string experimentKey)
+        {
+            if (_ExperimentKeyMap.ContainsKey(experimentKey))
+            {
+                var experiment = _ExperimentKeyMap[experimentKey];
+                if (experiment.AudienceConditionsList != null)
+                    return experiment.AudienceConditionsList as JArray;
+
+                 return ConditionTreeEvaluator.DecodeConditions(string.Join(",", experiment.AudienceIds)) as JArray;
+            }
+
+            string message = string.Format(@"Experiment key ""{0}"" is not in datafile.", experimentKey);
+            Logger.Log(LogLevel.ERROR, message);
+            ErrorHandler.HandleError(new InvalidExperimentException("Provided experiment is not in datafile."));
             return null;
         }
     }

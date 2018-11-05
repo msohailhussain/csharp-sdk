@@ -42,7 +42,7 @@ namespace OptimizelySDK.Entity
         {
             get
             {
-                return (conditionList == null && string.IsNullOrEmpty(Conditions)) ? null : (conditionList = Utils.ConditionEvaluator.DecodeConditions(Conditions ?? string.Empty));
+                return (conditionList == null && string.IsNullOrEmpty(Conditions)) ? null : (conditionList = Utils.ConditionTreeEvaluator.DecodeConditions(Conditions ?? string.Empty));
             }
         }
     }

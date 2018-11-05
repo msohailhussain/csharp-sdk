@@ -1,4 +1,5 @@
-﻿using OptimizelySDK.Entity;
+﻿using Newtonsoft.Json.Linq;
+using OptimizelySDK.Entity;
 using OptimizelySDK.Logger;
 using System.Linq;
 
@@ -30,16 +31,34 @@ namespace OptimizelySDK.Utils
         /// <returns>whether user meets audience conditions to be in experiment or not</returns>
         public static bool IsUserInExperiment(ProjectConfig config, Experiment experiment, UserAttributes userAttributes)
         {
-            var audienceIds = experiment.AudienceIds;
+            var audienceConditions = config.GetAudienceConditionsForExperiment(experiment.Key);
 
-            if (!audienceIds.Any())
+            // If there are no audiences, return true because that means ALL users are included in the experiment.
+            if (audienceConditions == null || !audienceConditions.Any())
                 return true;
 
             if (userAttributes == null)
                 userAttributes = new UserAttributes();
-            
-            var conditionEvaluator = new ConditionEvaluator();
-            return audienceIds.Any(id => conditionEvaluator.Evaluate(config.GetAudience(id).ConditionList, userAttributes).GetValueOrDefault());
+
+            var conditionTreeEvaluator = new ConditionTreeEvaluator();
+
+            bool? EvaluateConditionsWithUserAttributes(JToken condition)
+            {
+                return CustomAttributeConditionEvaluator.Evaluate(condition, userAttributes);
+            }
+
+            bool? EvaluateAudience(JToken audienceIdToken)
+            {
+                string audienceId = (string)audienceIdToken;
+                var audience = config.GetAudience(audienceId);
+
+                if (audience != null)
+                    return conditionTreeEvaluator.Evaluate(audience.ConditionList, EvaluateConditionsWithUserAttributes);
+
+                return null;
+            }
+
+            return conditionTreeEvaluator.Evaluate(audienceConditions, EvaluateAudience).GetValueOrDefault();
         }
     }
 }

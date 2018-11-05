@@ -23,7 +23,7 @@ namespace OptimizelySDK.Tests.UtilsTests
     [TestFixture]
     public class ConditionEvaluatorTest
     {
-        private ConditionEvaluator ConditionEvaluator = null;
+        private ConditionTreeEvaluator ConditionEvaluator = null;
         private object[] Conditions = null;
 
         private object[] AndConditions = null;
@@ -73,7 +73,7 @@ namespace OptimizelySDK.Tests.UtilsTests
 
             string InfinityIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 9223372036854775807, ""match"": ""exact""}]]]";
 
-            ConditionEvaluator = new ConditionEvaluator();
+            ConditionEvaluator = new ConditionTreeEvaluator();
             Conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ConditionsStr);
 
             AndConditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(AndConditionStr);

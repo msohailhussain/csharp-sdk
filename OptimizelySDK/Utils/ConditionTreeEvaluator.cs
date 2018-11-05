@@ -1,5 +1,5 @@
 ﻿/* 
- * Copyright 2017-2018, Optimizely
+ * Copyright 2018, Optimizely
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OptimizelySDK.Entity;
-using OptimizelySDK.Matcher;
 using System;
-using System.Linq;
 
 namespace OptimizelySDK.Utils
 {
-    public class ConditionEvaluator
+    public class ConditionTreeEvaluator
     {
         /// <summary>
         /// const string Representing AND operator.
@@ -40,11 +39,6 @@ namespace OptimizelySDK.Utils
         const string NOT_OPERATOR = "not";
 
         /// <summary>
-        /// String constant representing custome attribute condition type.
-        /// </summary>
-        const string CUSTOM_ATTRIBUTE_CONDITION_TYPE = "custom_attribute";
-
-        /// <summary>
         /// Evaluates an array of conditions as if the evaluator had been applied
         /// to each entry and the results AND-ed together.
         /// </summary>
@@ -52,7 +46,7 @@ namespace OptimizelySDK.Utils
         /// <param name="userAttributes">Hash representing user attributes</param>
         /// <returns>true/false if the user attributes match/don't match the given conditions,
         /// null if the user attributes and conditions can't be evaluated</returns>
-        private bool? AndEvaluator(JArray conditions, UserAttributes userAttributes)
+        private bool? AndEvaluator(JArray conditions, Func<JToken, bool?> leafEvaluator)
         {
             // According to the matrix:
             // false and true is false
@@ -64,7 +58,7 @@ namespace OptimizelySDK.Utils
             var foundNull = false;
             foreach(var condition in conditions)
             {
-                var result = Evaluate(condition, userAttributes);
+                var result = Evaluate(condition, leafEvaluator);
                 if (result == null)
                     foundNull = true;
                 else if (result == false)
@@ -85,7 +79,7 @@ namespace OptimizelySDK.Utils
         /// <param name="userAttributes">Hash representing user attributes</param>
         /// <returns>true/false if the user attributes match/don't match the given conditions,
         /// null if the user attributes and conditions can't be evaluated</returns>
-        private bool? OrEvaluator(JArray conditions, UserAttributes userAttributes)
+        private bool? OrEvaluator(JArray conditions, Func<JToken, bool?> leafEvaluator)
         {
             // According to the matrix:
             // true returns true
@@ -95,7 +89,7 @@ namespace OptimizelySDK.Utils
             var foundNull = false;
             foreach (var condition in conditions)
             {
-                var result = Evaluate(condition, userAttributes);
+                var result = Evaluate(condition, leafEvaluator);
                 if (result == null)
                     foundNull = true;
                 else if (result == true)
@@ -116,18 +110,18 @@ namespace OptimizelySDK.Utils
         /// <param name="userAttributes">Hash representing user attributes</param>
         /// <returns>true/false if the user attributes match/don't match the given conditions,
         /// null if the user attributes and conditions can't be evaluated</returns>
-        private bool? NotEvaluator(JArray conditions, UserAttributes userAttributes)
+        private bool? NotEvaluator(JArray conditions, Func<JToken, bool?> leafEvaluator)
         {
             if (conditions.Count == 1)
             {
-                var result = Evaluate(conditions[0], userAttributes);
+                var result = Evaluate(conditions[0], leafEvaluator);
                 return result == null ? null : !result;
             }
 
             return false;
         }
 
-        public bool? Evaluate(JToken conditions, UserAttributes userAttributes)
+        public bool? Evaluate(JToken conditions, Func<JToken, bool?> leafEvaluator)
         {
             //Cloning is because it is reference type
             var conditionsArray = conditions.DeepClone() as JArray;
@@ -135,35 +129,16 @@ namespace OptimizelySDK.Utils
             {
                 switch (conditions[0].ToString())
                 {
-                    case AND_OPERATOR: conditionsArray.RemoveAt(0); return AndEvaluator(conditionsArray, userAttributes);
-                    case OR_OPERATOR:  conditionsArray.RemoveAt(0); return OrEvaluator(conditionsArray, userAttributes);
-                    case NOT_OPERATOR: conditionsArray.RemoveAt(0); return NotEvaluator(conditionsArray, userAttributes);
+                    case AND_OPERATOR: conditionsArray.RemoveAt(0); return AndEvaluator(conditionsArray, leafEvaluator);
+                    case OR_OPERATOR:  conditionsArray.RemoveAt(0); return OrEvaluator(conditionsArray,  leafEvaluator);
+                    case NOT_OPERATOR: conditionsArray.RemoveAt(0); return NotEvaluator(conditionsArray, leafEvaluator);
                     default:
                         return false;
                 }
             }
 
-            if (conditions["type"] != null && conditions["type"].ToString() != CUSTOM_ATTRIBUTE_CONDITION_TYPE)
-                return null;
-
-            string matchType = conditions["match"]?.ToString();
-            var conditionValue = conditions["value"]?.ToObject<object>();
-            
-            object attributeValue = null;
-            if (userAttributes != null && userAttributes.ContainsKey(conditions["name"].ToString()))
-            {
-                attributeValue = userAttributes[conditions["name"].ToString()];
-                
-                // Newtonsoft.JSON converts int value to long. And exact matcher expect types to be the same.
-                // This conversion enable us to pass that scenario.
-                attributeValue = attributeValue is int ? Convert.ToInt64(attributeValue) : attributeValue;
-            }
-
-            // Check infinity or NaN for numeric attribute and condition values.
-            if (!ValidateNumericValue(attributeValue) || !ValidateNumericValue(conditionValue))
-                return null;
-
-            return MatchType.GetMatcher(matchType, conditionValue)?.Eval(attributeValue);
+            var leafCondition = conditions;
+            return leafEvaluator(leafCondition);
         }
 
         public bool? Evaluate(object[] conditions, UserAttributes userAttributes)
@@ -181,30 +156,6 @@ namespace OptimizelySDK.Utils
         public static JToken DecodeConditions(string conditions)
         {
             return JToken.Parse(conditions);
-        }
-
-        /// <summary>
-        /// Determine if the value is a valid numeric value.
-        /// </summary>
-        /// <param name="value">Value to be validated</param>
-        /// <returns>true for numeric types if the value is valid numeric value, false otherwise.
-        /// Returns true for non-numeric typed value.</returns>
-        private static bool ValidateNumericValue(object value)
-        {
-            if (value is int || value is long)
-            {
-                var convertedValue = (long)value;
-                return convertedValue > long.MinValue && convertedValue < long.MaxValue;
-            }
-
-            if (value is float || value is double)
-            {
-                var convertedValue = (double)value;
-                return !(double.IsInfinity(convertedValue) || double.IsNaN(convertedValue));
-            }
-
-            // Do not validate and return true when the provided value is not of a numeric type.
-            return true;
         }
     }
 }
