@@ -141,9 +141,9 @@ namespace OptimizelySDK.Utils
             return leafEvaluator(leafCondition);
         }
 
-        public bool? Evaluate(object[] conditions, UserAttributes userAttributes)
+        public bool? Evaluate(object[] conditions, Func<JToken, bool?> leafEvaluator)
         {
-            return Evaluate(ConvertObjectArrayToJToken(conditions), userAttributes);
+            return Evaluate(ConvertObjectArrayToJToken(conditions), leafEvaluator);
         }
 
         private JToken ConvertObjectArrayToJToken(object[] conditions)
