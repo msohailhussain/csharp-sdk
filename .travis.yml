@@ -2,7 +2,7 @@ language: csharp
 mono:
 - 2.10.8
 - 3.2.8
-- 4.4.0
+- 4.8.0
 - 5.2.0
 - 5.10.0
 solution: "./OptimizelySDK.Travis.sln"
