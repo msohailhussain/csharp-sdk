@@ -114,6 +114,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             ConditionEvaluator = null;
         }
 
+        #region Evaluate Tests
         [Test]
         public void TestEvaluateWhenLeafConditionEvaluatorReturnsTrue()
         {
@@ -129,8 +130,10 @@ namespace OptimizelySDK.Tests.UtilsTests
         [Test]
         public void TestEvaluateWhenLeafConditionEvaluatorReturnsNull()
         {
-            Assert.Null(ConditionEvaluator.Evaluate(AndConditions, a => null));
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, a => null), Is.Null);
         }
+
+        #endregion // Evaluate Tests
 
         #region AND condition Tests
 
@@ -145,13 +148,14 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
                 .Returns(true)
-                .Returns(false);
+                .Returns(false)
+                .Returns(true);
 
             Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.False);
         }
 
         [Test]
-        public void TestAndEvaluatorReturnsTrueWhenAllOperandsEvaluateToNull()
+        public void TestAndEvaluatorReturnsNullWhenAllOperandsEvaluateToNull()
         {
             Assert.That(ConditionEvaluator.Evaluate(AndConditions, a => null), Is.Null);
         }
@@ -161,10 +165,106 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
                 .Returns(true)
+                .Returns(null)
+                .Returns(true);
+
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.Null);
+        }
+
+        [Test]
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalseAndNulls()
+        {
+            LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+                .Returns(null)
+                .Returns(false)
                 .Returns(null);
 
-            Assert.Null(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval));
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.False);
         }
+
+        [Test]
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToTrueFalseAndNulls()
+        {
+            LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+                .Returns(true)
+                .Returns(false)
+                .Returns(null);
+
+            Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.False);
+        }
+
+        #endregion // AND condition Tests
+
+        #region OR condition Tests
+
+        [Test]
+        public void TestOrEvaluatorReturnsTrueWhenAnyOperandEvaluatesToTrue()
+        {
+            LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+                .Returns(true)
+                .Returns(false)
+                .Returns(true);
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, LeafEvaluatorMock.Object.Eval), Is.True);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsFalseWhenAllOperandsEvaluatesToFalse()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, a => false), Is.False);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsNullWhenAllOperandsEvaluateToNull()
+        {
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, a => null), Is.Null);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsTrueWhenOperandsEvaluateToTruesAndNulls()
+        {
+            LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+                .Returns(true)
+                .Returns(null)
+                .Returns(true);
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, LeafEvaluatorMock.Object.Eval), Is.True);
+        }
+
+        [Test]
+        public void TestOrEvaluatorReturnsNullWhenOperandsEvaluateToFalsesAndNulls()
+        {
+            LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+                .Returns(false)
+                .Returns(null)
+                .Returns(false);
+
+            Assert.That(ConditionEvaluator.Evaluate(OrConditions, LeafEvaluatorMock.Object.Eval), Is.Null);
+        }
+
+        //[Test]
+        //public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalseAndNulls()
+        //{
+        //    LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+        //        .Returns(null)
+        //        .Returns(false)
+        //        .Returns(null);
+
+        //    Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.False);
+        //}
+
+        //[Test]
+        //public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToTrueFalseAndNulls()
+        //{
+        //    LeafEvaluatorMock.SetupSequence(le => le.Eval(It.IsAny<JToken>()))
+        //        .Returns(true)
+        //        .Returns(false)
+        //        .Returns(null);
+
+        //    Assert.That(ConditionEvaluator.Evaluate(AndConditions, LeafEvaluatorMock.Object.Eval), Is.False);
+        //}
+
+        #endregion // OR condition Tests
 
         //[Test]
         //public void TestAndEvaluatorReturnsNullWhenAllOperandsReturnNull()
@@ -218,7 +318,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         //    Assert.That(ConditionEvaluator.Evaluate(AndConditions, userAttributes), Is.False);
         //}
 
-        #endregion // AND condition Tests
+        // #endregion // AND condition Tests
 
         //#region OR condition Tests
 
