@@ -1,6 +1,6 @@
 language: csharp
 mono:
-- 3.0.0  # Csharp 5.0
+- 3.12.1 # Csharp 5.0
 - 4.8.1  # Csharp 6.0 
 - 5.2.0  # Csharp 7.0
 - 5.10.0 # Csharp 7.2
