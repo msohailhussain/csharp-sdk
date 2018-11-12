@@ -1,10 +1,10 @@
 language: csharp
 mono:
-- 3.12.1 # Csharp 5.0
-- 4.8.1  # Csharp 6.0 
-- 5.2.0  # Csharp 7.0
-- 5.10.0 # Csharp 7.2
-- 5.16.0 # Csharp 7.3
+- 2.6.7  # .NET 3.5
+- 3.12.1 # .NET 4.0
+- 4.8.1  # .NET 4.5
+- 5.2.0  # .NET Standard 2.0
+- latest
 solution: "./OptimizelySDK.Travis.sln"
 install:
   - nuget restore ./OptimizelySDK.Travis.sln
