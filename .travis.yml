@@ -1,3 +1,4 @@
+os: windows
 language: csharp
 mono:
 - 2.6		# .NET 3.5
