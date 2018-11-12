@@ -1,9 +1,9 @@
 language: csharp
 mono:
-- 2.10.8 # .NET 3.5
-- 3.12.1 # .NET 4.0
-- 4.8.1  # .NET 4.5
-- 5.2.0  # .NET Standard 2.0
+- 2.6	# .NET 3.5
+- 3.12 	# .NET 4.0
+- 4.8  	# .NET 4.5
+- 5.2	# .NET Standard 2.0
 - latest
 solution: "./OptimizelySDK.Travis.sln"
 install:
