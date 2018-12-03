@@ -1951,6 +1951,45 @@ namespace OptimizelySDK.Tests
         #region Test ValidateStringInputs
 
         [Test]
+        public void TestValidateStringInputsWithValidValues()
+        {
+            var optly = Helper.CreatePrivateOptimizely();
+
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "test_experiment" } });
+            Assert.True(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, "buy_now_event" } });
+            Assert.True(result);
+        }
+
+        [Test]
+        public void TestValidateStringInputsWithInvalidValues()
+        {
+            var optly = Helper.CreatePrivateOptimizely();
+
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "" } });
+            Assert.False(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, null } });
+            Assert.False(result);
+        }
+
+        [Test]
+        public void TestValidateStringInputsWithUserId()
+        {
+            var optly = Helper.CreatePrivateOptimizely();
+
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "testUser" } });
+            Assert.True(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "" } });
+            Assert.True(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, null } });
+            Assert.False(result);
+        }
+
+        [Test]
         public void TestActivateValidateInputValues()
         {
             // Verify that ValidateStringInputs does not log error for valid values.
@@ -2109,48 +2148,5 @@ namespace OptimizelySDK.Tests
         }
 
         #endregion // Test Audience Match Types
-        
-        #region TestValidateStringInputs
-
-        [Test]
-        public void TestValidateStringInputsWithValidValues()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "test_experiment" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, "buy_now_event" } });
-            Assert.True(result);
-        }
-
-        [Test]
-        public void TestValidateStringInputsWithInvalidValues()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "" } });
-            Assert.False(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, null } });
-            Assert.False(result);
-        }
-
-        [Test]
-        public void TestValidateStringInputsWithUserId()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "testUser" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, null } });
-            Assert.False(result);
-        }
-
-        #endregion //TestValidateStringInputs
     }
 }
