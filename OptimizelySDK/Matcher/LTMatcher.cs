@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
+using OptimizelySDK.Utils;
 using System;
 
 namespace OptimizelySDK.Matcher
 {
-    public class LTMatcher<T> : AttributeMatcher<T> where T : IComparable
+    public class LTMatcher : AttributeMatcher<double>
     {
-        T ConditionValue;
+        double ConditionValue;
 
-        public LTMatcher(T conditionValue)
+        public LTMatcher(double conditionValue)
         {
-            ConditionValue = conditionValue;    
+            ConditionValue = conditionValue;
         }
 
         public override bool? Eval(object attributeValue)
         {
-            if (IsNumericValue(attributeValue) && Convert(attributeValue, out T convertedValue))
-                return convertedValue.CompareTo(ConditionValue) < 0;
+            if (Validator.IsNumericValue(attributeValue))
+                return Convert.ToDouble(attributeValue) < ConditionValue;
 
             return null;
         }

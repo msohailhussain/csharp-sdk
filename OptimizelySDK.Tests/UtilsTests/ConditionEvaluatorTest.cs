@@ -134,7 +134,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             var userAttributes = new UserAttributes();
 
-            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.Null);
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         {
             UserAttributes userAttributes = null;
 
-            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.False);
+            Assert.That(ConditionEvaluator.Evaluate(Conditions, userAttributes), Is.Null);
         }
 
         [Test]

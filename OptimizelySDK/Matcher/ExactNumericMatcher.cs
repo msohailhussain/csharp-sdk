@@ -19,28 +19,21 @@ using System;
 
 namespace OptimizelySDK.Matcher
 {
-    public abstract class AttributeMatcher<T> : IMatcher
+    public class ExactNumericMatcher : AttributeMatcher<double>
     {
-        public abstract bool? Eval(object attributeValue);
+        double ConditionValue;
 
-        public bool ConvertValue(T conditionValue, object attributeValue, out T convertedValue)
+        public ExactNumericMatcher(double conditionValue)
         {
-            try
-            {
-                if (conditionValue.GetType().IsInstance(attributeValue))
-                {
-                    convertedValue = (T)attributeValue;
-                    return true;
-                }
+            ConditionValue = conditionValue;
+        }
 
-                convertedValue = default(T);
-                return false;
-            }
-            catch (Exception)
-            {
-                convertedValue = default(T);
-                return false;
-            }
+        public override bool? Eval(object attributeValue)
+        {
+            if (Validator.IsNumericValue(attributeValue))
+                return ConditionValue == Convert.ToDouble(attributeValue);
+            
+            return null;
         }
     }
 }

@@ -2070,10 +2070,6 @@ namespace OptimizelySDK.Tests
         [Test]
         public void TestTrackWithTypedAudiences()
         {
-            //LogEvent logEventSpy = null;
-            //EventDispatcherMock.Setup(ed => ed.DispatchEvent(It.IsAny<LogEvent>()))
-            //    .Callback<LogEvent>((p) => logEventSpy = p);
-
             OptimizelyTypedAudience.Track("item_bought", "user1", new UserAttributes
             {
                 { "house", "Welcome to Slytherin!" }

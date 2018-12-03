@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using OptimizelySDK.Utils;
 using System;
 
 namespace OptimizelySDK.Matcher
@@ -36,26 +37,20 @@ namespace OptimizelySDK.Matcher
                 case AttributeMatchTypes.EXACT:
                     if (conditionValue is string)
                         return new ExactMatcher<string>((string)conditionValue);
-                    else if (conditionValue is float || conditionValue is double)
-                            return new ExactMatcher<double>((double)conditionValue);
                     else if (conditionValue is bool)
                         return new ExactMatcher<bool>((bool)conditionValue);
-                    else if (conditionValue is int || conditionValue is long)
-                        return new ExactMatcher<long>((long)conditionValue);
+                    else if (Validator.IsNumericValue(conditionValue))
+                        return new ExactNumericMatcher((double)conditionValue);
                     break;
                 case AttributeMatchTypes.EXIST:
                     return new ExistsMatcher(conditionValue);
                 case AttributeMatchTypes.GREATER_THAN:
-                    if (conditionValue is float || conditionValue is double)
-                        return new GTMatcher<double>((double)conditionValue);
-                    else if (conditionValue is int || conditionValue is long)
-                        return new GTMatcher<long>((long)conditionValue);
+                    if (Validator.IsNumericValue(conditionValue))
+                        return new GTMatcher((double)conditionValue);
                     break;
                 case AttributeMatchTypes.LESS_THAN:
-                    if (conditionValue is float || conditionValue is double)
-                        return new LTMatcher<double>((double)conditionValue);
-                    else if (conditionValue is int || conditionValue is long)
-                        return new LTMatcher<long>((long)conditionValue);
+                    if (Validator.IsNumericValue(conditionValue))
+                        return new LTMatcher((double)conditionValue);
                     break;
                 case AttributeMatchTypes.SUBSTRING:
                     if (conditionValue is string)

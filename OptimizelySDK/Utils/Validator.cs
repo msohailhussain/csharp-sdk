@@ -114,6 +114,16 @@ namespace OptimizelySDK.Utils
                 (attribute.Value is int || attribute.Value is string || attribute.Value is double 
                  || attribute.Value is bool || attribute.Value is float || attribute.Value is long);
         }
+
+        /// <summary>
+        /// Validates if the provided value is numeric.
+        /// </summary>
+        /// <param name="value">Input value</param>
+        /// <returns>true if the provided value is numeric, false otherwise</returns>
+        public static bool IsNumericValue(object value)
+        {
+            return value is int || value is long || value is float || value is double;
+        }
     }
 }
 

@@ -151,6 +151,9 @@
     <Compile Include="..\OptimizelySDK\Utils\Validator.cs">
       <Link>Utils\Validator.cs</Link>
     </Compile>
+	<Compile Include="..\OptimizelySDK\Utils\TypeExtensions.cs">
+      <Link>Utils\TypeExtensions.cs</Link>
+    </Compile>
 	<Compile Include="..\OptimizelySDK\Utils\ControlAttributes.cs">
       <Link>Utils\ControlAttributes.cs</Link>
     </Compile>
@@ -196,6 +199,9 @@
     </Compile>
 	<Compile Include="..\OptimizelySDK\Matcher\ExactMatcher.cs">
       <Link>Matcher\ExactMatcher.cs</Link>
+    </Compile>
+	<Compile Include="..\OptimizelySDK\Matcher\ExactNumericMatcher.cs">
+      <Link>Matcher\ExactNumericMatcher.cs</Link>
     </Compile>
 	<Compile Include="..\OptimizelySDK\Matcher\ExistsMatcher.cs">
       <Link>Matcher\ExistsMatcher.cs</Link>
