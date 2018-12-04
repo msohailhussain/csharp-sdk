@@ -366,7 +366,6 @@ namespace OptimizelySDK.Tests.UtilsTests
             Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
-            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.55 } }));
         }
 
         [Test]
@@ -383,6 +382,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             Assert.That(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", false } }), Is.True);
             Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 1.5 } }), Is.True);
             Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.0 } }), Is.True);
         }
 
         #endregion // ExactMatcher Tests

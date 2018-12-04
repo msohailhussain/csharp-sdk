@@ -40,17 +40,17 @@ namespace OptimizelySDK.Matcher
                     else if (conditionValue is bool)
                         return new ExactMatcher<bool>((bool)conditionValue);
                     else if (Validator.IsNumericValue(conditionValue))
-                        return new ExactNumericMatcher((double)conditionValue);
+                        return new ExactNumericMatcher(Convert.ToDouble(conditionValue));
                     break;
                 case AttributeMatchTypes.EXIST:
                     return new ExistsMatcher(conditionValue);
                 case AttributeMatchTypes.GREATER_THAN:
                     if (Validator.IsNumericValue(conditionValue))
-                        return new GTMatcher((double)conditionValue);
+                        return new GTMatcher(Convert.ToDouble(conditionValue));
                     break;
                 case AttributeMatchTypes.LESS_THAN:
                     if (Validator.IsNumericValue(conditionValue))
-                        return new LTMatcher((double)conditionValue);
+                        return new LTMatcher(Convert.ToDouble(conditionValue));
                     break;
                 case AttributeMatchTypes.SUBSTRING:
                     if (conditionValue is string)

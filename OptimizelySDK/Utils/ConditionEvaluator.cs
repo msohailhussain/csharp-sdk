@@ -153,10 +153,6 @@ namespace OptimizelySDK.Utils
             if (userAttributes != null && userAttributes.ContainsKey(conditions["name"].ToString()))
             {
                 attributeValue = userAttributes[conditions["name"].ToString()];
-                
-                // Newtonsoft.JSON converts int value to long. And exact matcher expect types to be the same.
-                // This conversion enable us to pass that scenario.
-                attributeValue = attributeValue is int ? Convert.ToInt64(attributeValue) : attributeValue;
             }
 
             // Check infinity or NaN for numeric attribute and condition values.
@@ -193,13 +189,13 @@ namespace OptimizelySDK.Utils
         {
             if (value is int || value is long)
             {
-                var convertedValue = (long)value;
+                var convertedValue = Convert.ToInt64(value);
                 return convertedValue > long.MinValue && convertedValue < long.MaxValue;
             }
 
             if (value is float || value is double)
             {
-                var convertedValue = (double)value;
+                var convertedValue = Convert.ToDouble(value);
                 return !(double.IsInfinity(convertedValue) || double.IsNaN(convertedValue));
             }
 
