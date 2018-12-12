@@ -158,6 +158,9 @@
 	<Compile Include="..\OptimizelySDK\Utils\ControlAttributes.cs">
       <Link>Utils\ControlAttributes.cs</Link>
     </Compile>
+	<Compile Include="..\OptimizelySDK\Utils\Evaluator.cs">
+      <Link>Utils\Evaluator.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\OptimizelySDK\Bucketing\Bucketer.cs">
       <Link>Bucketing\Bucketer.cs</Link>
@@ -191,36 +194,6 @@
     </Compile>
 	<Compile Include="..\OptimizelySDK\Entity\Rollout.cs">
       <Link>Entity\Rollout</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\AttributeMatcher.cs">
-      <Link>Matcher\AttributeMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\DefaultMatcherForLegacyAttributes.cs">
-      <Link>Matcher\DefaultMatcherForLegacyAttributes.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\ExactMatcher.cs">
-      <Link>Matcher\ExactMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\ExactNumericMatcher.cs">
-      <Link>Matcher\ExactNumericMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\ExistsMatcher.cs">
-      <Link>Matcher\ExistsMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\GTMatcher.cs">
-      <Link>Matcher\GTMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\IMatcher.cs">
-      <Link>Matcher\IMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\LTMatcher.cs">
-      <Link>Matcher\LTMatcher.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\MatchType.cs">
-      <Link>Matcher\MatchType.cs</Link>
-    </Compile>
-	<Compile Include="..\OptimizelySDK\Matcher\SubstringMatcher.cs">
-      <Link>Matcher\SubstringMatcher.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

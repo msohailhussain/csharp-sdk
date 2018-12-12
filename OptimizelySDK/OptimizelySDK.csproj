@@ -96,16 +96,6 @@
     <Compile Include="Logger\DefaultLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\NoOpLogger.cs" />
-    <Compile Include="Matcher\AttributeMatcher.cs" />
-    <Compile Include="Matcher\DefaultMatcherForLegacyAttributes.cs" />
-    <Compile Include="Matcher\ExactMatcher.cs" />
-    <Compile Include="Matcher\ExactNumericMatcher.cs" />
-    <Compile Include="Matcher\ExistsMatcher.cs" />
-    <Compile Include="Matcher\GTMatcher.cs" />
-    <Compile Include="Matcher\IMatcher.cs" />
-    <Compile Include="Matcher\LTMatcher.cs" />
-    <Compile Include="Matcher\MatchType.cs" />
-    <Compile Include="Matcher\SubstringMatcher.cs" />
     <Compile Include="Notifications\NotificationCenter.cs" />
     <Compile Include="Optimizely.cs" />
     <Compile Include="ProjectConfig.cs" />
@@ -115,6 +105,7 @@
     <Compile Include="Bucketing\UserProfileUtil.cs" />
     <Compile Include="Utils\ExperimentUtils.cs" />
     <Compile Include="Utils\ControlAttributes.cs" />
+    <Compile Include="Utils\Evaluator.cs" />
     <Compile Include="Utils\TypeExtensions.cs" />
     <Compile Include="Utils\Validator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

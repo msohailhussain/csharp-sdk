@@ -16,9 +16,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OptimizelySDK.Entity;
-using OptimizelySDK.Matcher;
 using System;
-using System.Linq;
 
 namespace OptimizelySDK.Utils
 {
@@ -159,7 +157,8 @@ namespace OptimizelySDK.Utils
             if (!ValidateNumericValue(attributeValue) || !ValidateNumericValue(conditionValue))
                 return null;
 
-            return MatchType.GetMatcher(matchType, conditionValue)?.Eval(attributeValue);
+            var evaluator = Evaluator.GetMatcher(matchType);
+            return evaluator != null ? evaluator(conditionValue, attributeValue) : null;
         }
 
         public bool? Evaluate(object[] conditions, UserAttributes userAttributes)
