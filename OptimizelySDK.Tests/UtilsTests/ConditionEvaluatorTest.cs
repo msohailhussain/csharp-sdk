@@ -39,9 +39,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         private object[] ExactBoolCondition = null;
         private object[] ExactDecimalCondition = null;
         private object[] ExactIntCondition = null;
-
-        private object[] InfinityIntCondition = null;
-
+        
         [TestFixtureSetUp]
         public void Initialize()
         {
@@ -70,9 +68,7 @@ namespace OptimizelySDK.Tests.UtilsTests
 
             string GTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""gt""}]]]";
             string LTConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""lt""}]]]";
-
-            string InfinityIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 9223372036854775807, ""match"": ""exact""}]]]";
-
+            
             ConditionEvaluator = new ConditionEvaluator();
             Conditions = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ConditionsStr);
 
@@ -91,8 +87,6 @@ namespace OptimizelySDK.Tests.UtilsTests
 
             GTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(GTConditionStr);
             LTCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(LTConditionStr);
-
-            InfinityIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(InfinityIntConditionStr);
         }
 
         [TestFixtureTearDown]
@@ -366,13 +360,6 @@ namespace OptimizelySDK.Tests.UtilsTests
             Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
-        }
-
-        [Test]
-        public void TestExactMatcherReturnsNullWithNumericInfinity()
-        {
-            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } })); // Infinity value
-            Assert.Null(ConditionEvaluator.Evaluate(InfinityIntCondition, new UserAttributes { { "attr_value", 15 } })); // Infinity condition
         }
 
         [Test]
