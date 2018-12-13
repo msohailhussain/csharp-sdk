@@ -153,10 +153,6 @@ namespace OptimizelySDK.Utils
                 attributeValue = userAttributes[conditions["name"].ToString()];
             }
 
-            // Check infinity or NaN for numeric attribute and condition values.
-            if (!ValidateNumericValue(attributeValue) || !ValidateNumericValue(conditionValue))
-                return null;
-
             var evaluator = Evaluator.GetEvaluator(matchType);
             return evaluator != null ? evaluator(conditionValue, attributeValue) : null;
         }

@@ -452,13 +452,6 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestGTMatcherReturnsNullWhenAttributeValueIsInfinity()
-        {
-            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", double.PositiveInfinity } }));
-            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 9223372036854775807 } })); // Int infinity
-        }
-
-        [Test]
         public void TestGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue()
         {
             Assert.That(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", 15 } }), Is.True);
@@ -479,13 +472,6 @@ namespace OptimizelySDK.Tests.UtilsTests
         public void TestLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
         {
             Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", "invalid" } }));
-        }
-
-        [Test]
-        public void TestLTMatcherReturnsNullWhenAttributeValueIsInfinity()
-        {
-            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } }));
-            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", 9223372036854775807 } })); // Int infinity
         }
 
         [Test]
