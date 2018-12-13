@@ -157,7 +157,7 @@ namespace OptimizelySDK.Utils
             if (!ValidateNumericValue(attributeValue) || !ValidateNumericValue(conditionValue))
                 return null;
 
-            var evaluator = Evaluator.GetMatcher(matchType);
+            var evaluator = Evaluator.GetEvaluator(matchType);
             return evaluator != null ? evaluator(conditionValue, attributeValue) : null;
         }
 

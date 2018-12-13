@@ -29,7 +29,7 @@ namespace OptimizelySDK.Utils
             public const string SUBSTRING = "substring";
         }
 
-        public static Func<object, object, bool?> GetMatcher(string matchType)
+        public static Func<object, object, bool?> GetEvaluator(string matchType)
         {
             switch (matchType)
             {
