@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Newtonsoft.Json.Linq;
+
 namespace OptimizelySDK.Entity
 {
     public class Audience : Entity
@@ -30,7 +32,7 @@ namespace OptimizelySDK.Entity
         /// <summary>
         /// Audience Conditions
         /// </summary>
-        public string Conditions { get; set; }
+        public object Conditions { get; set; }
 
 
         private Newtonsoft.Json.Linq.JToken conditionList = null;
@@ -38,11 +40,21 @@ namespace OptimizelySDK.Entity
         /// <summary>
         /// De-serialized audience conditions
         /// </summary>
-        public Newtonsoft.Json.Linq.JToken ConditionList
+        public JToken ConditionList
         {
             get
             {
-                return (conditionList == null && string.IsNullOrEmpty(Conditions)) ? null : (conditionList = Utils.ConditionEvaluator.DecodeConditions(Conditions ?? string.Empty));
+                if (conditionList == null && Conditions == null)
+                    return null;
+
+                if (Conditions is string)
+                    conditionList = Utils.ConditionEvaluator.DecodeConditions((string)Conditions);
+                else
+                    conditionList = (JToken)Conditions;
+
+                return conditionList;
+
+                // return (conditionList == null && Conditions == null) ? null : (conditionList = Utils.ConditionEvaluator.DecodeConditions(Conditions.ToString() ?? string.Empty));
             }
         }
     }
