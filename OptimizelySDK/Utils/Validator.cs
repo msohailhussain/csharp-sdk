@@ -120,9 +120,15 @@ namespace OptimizelySDK.Utils
         /// </summary>
         /// <param name="value">Input value</param>
         /// <returns>true if the provided value is numeric, false otherwise</returns>
-        public static bool IsNumericValue(object value)
+        public static bool IsValidNumericValue(object value)
         {
-            return value is int || value is long || value is float || value is double;
+            if (value is int || value is long || value is float || value is double)
+            {
+                var convertedValue = Convert.ToDouble(value);
+                return !(double.IsInfinity(convertedValue) || double.IsNaN(convertedValue) || convertedValue > Math.Exp(53));
+            }
+
+            return false;
         }
     }
 }

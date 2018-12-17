@@ -173,29 +173,5 @@ namespace OptimizelySDK.Utils
         {
             return JToken.Parse(conditions);
         }
-
-        /// <summary>
-        /// Determine if the value is a valid numeric value.
-        /// </summary>
-        /// <param name="value">Value to be validated</param>
-        /// <returns>true for numeric types if the value is valid numeric value, false otherwise.
-        /// Returns true for non-numeric typed value.</returns>
-        private static bool ValidateNumericValue(object value)
-        {
-            if (value is int || value is long)
-            {
-                var convertedValue = Convert.ToInt64(value);
-                return convertedValue > long.MinValue && convertedValue < long.MaxValue;
-            }
-
-            if (value is float || value is double)
-            {
-                var convertedValue = Convert.ToDouble(value);
-                return !(double.IsInfinity(convertedValue) || double.IsNaN(convertedValue));
-            }
-
-            // Do not validate and return true when the provided value is not of a numeric type.
-            return true;
-        }
     }
 }

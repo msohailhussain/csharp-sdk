@@ -39,7 +39,8 @@ namespace OptimizelySDK.Tests.UtilsTests
         private object[] ExactBoolCondition = null;
         private object[] ExactDecimalCondition = null;
         private object[] ExactIntCondition = null;
-        
+        private object[] ExactNullCondition = null;
+
         [TestFixtureSetUp]
         public void Initialize()
         {
@@ -61,6 +62,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             string ExactBoolConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": false, ""match"": ""exact""}]]]";
             string ExactDecimalConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 1.5, ""match"": ""exact""}]]]";
             string ExactIntConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": 10, ""match"": ""exact""}]]]";
+            string ExactNullConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""value"": null, ""match"": ""exact""}]]]";
 
             string ExistsConditionStr = @"[""and"", [""or"", [""or"", {""name"": ""attr_value"", ""type"": ""custom_attribute"", ""match"": ""exists""}]]]";
 
@@ -80,6 +82,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             ExactBoolCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactBoolConditionStr);
             ExactDecimalCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactDecimalConditionStr);
             ExactIntCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactIntConditionStr);
+            ExactNullCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExactNullConditionStr);
 
             ExistsCondition = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(ExistsConditionStr);
 
@@ -199,7 +202,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestAndEvaluatorReturnsNullWhenOperandsEvaluateToTruesAndNulls()
+        public void TestAndEvaluatorReturnsNullWhenOperandsEvaluateToTrueAndNull()
         {
             var userAttributes = new UserAttributes
             {
@@ -212,7 +215,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalsesAndNulls()
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalseAndNull()
         {
             var userAttributes = new UserAttributes
             {
@@ -225,7 +228,7 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalsesTruesAndNulls()
+        public void TestAndEvaluatorReturnsFalseWhenOperandsEvaluateToFalseTrueAndNull()
         {
             var userAttributes = new UserAttributes
             {
@@ -360,6 +363,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             Assert.Null(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", true } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", "abcd" } }));
             Assert.Null(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", false } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactBoolCondition, new UserAttributes { { "attr_value", 0 } }));
         }
 
         [Test]
@@ -370,6 +374,7 @@ namespace OptimizelySDK.Tests.UtilsTests
             Assert.That(ConditionEvaluator.Evaluate(ExactDecimalCondition, new UserAttributes { { "attr_value", 1.5 } }), Is.True);
             Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10 } }), Is.True);
             Assert.That(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", 10.0 } }), Is.True);
+            Assert.That(ConditionEvaluator.Evaluate(ExactNullCondition, new UserAttributes { { "attr_value", null } }), Is.True);
         }
 
         #endregion // ExactMatcher Tests

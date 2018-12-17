@@ -52,11 +52,14 @@ namespace OptimizelySDK.Utils
 
         public static bool? ExactEvaluator(object conditionValue, object attributeValue)
         {
-            if (Validator.IsNumericValue(conditionValue) && Validator.IsNumericValue(attributeValue))
-                return Convert.ToDouble(conditionValue) == Convert.ToDouble(attributeValue);
+            if (conditionValue == null && attributeValue == null)
+                return true;
 
             if (conditionValue is bool && attributeValue is bool)
                 return (bool)conditionValue == (bool)attributeValue;
+
+            if (Validator.IsValidNumericValue(conditionValue) && Validator.IsValidNumericValue(attributeValue))
+                return Convert.ToDouble(conditionValue) == Convert.ToDouble(attributeValue);
 
             if (conditionValue is string && attributeValue is string)
                 return (string)conditionValue == (string)attributeValue;
@@ -71,7 +74,7 @@ namespace OptimizelySDK.Utils
 
         public static bool? GreaterThanEvaluator(object conditionValue, object attributeValue)
         {
-            if (Validator.IsNumericValue(conditionValue) && Validator.IsNumericValue(attributeValue))
+            if (Validator.IsValidNumericValue(conditionValue) && Validator.IsValidNumericValue(attributeValue))
                 return Convert.ToDouble(attributeValue) > Convert.ToDouble(conditionValue);
 
             return null;
@@ -79,7 +82,7 @@ namespace OptimizelySDK.Utils
 
         public static bool? LessThanEvaluator(object conditionValue, object attributeValue)
         {
-            if (Validator.IsNumericValue(conditionValue) && Validator.IsNumericValue(attributeValue))
+            if (Validator.IsValidNumericValue(conditionValue) && Validator.IsValidNumericValue(attributeValue))
                 return Convert.ToDouble(attributeValue) < Convert.ToDouble(conditionValue);
 
             return null;
