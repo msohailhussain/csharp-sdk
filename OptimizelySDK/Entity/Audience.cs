@@ -33,10 +33,7 @@ namespace OptimizelySDK.Entity
         /// Audience Conditions
         /// </summary>
         public object Conditions { get; set; }
-
-
-        private Newtonsoft.Json.Linq.JToken conditionList = null;
-
+        
         /// <summary>
         /// De-serialized audience conditions
         /// </summary>
@@ -44,17 +41,10 @@ namespace OptimizelySDK.Entity
         {
             get
             {
-                if (conditionList == null && Conditions == null)
+                if (Conditions == null)
                     return null;
 
-                if (Conditions is string)
-                    conditionList = Utils.ConditionEvaluator.DecodeConditions((string)Conditions);
-                else
-                    conditionList = (JToken)Conditions;
-
-                return conditionList;
-
-                // return (conditionList == null && Conditions == null) ? null : (conditionList = Utils.ConditionEvaluator.DecodeConditions(Conditions.ToString() ?? string.Empty));
+                return Conditions is string ? Utils.ConditionEvaluator.DecodeConditions((string)Conditions) : (JToken)Conditions;
             }
         }
     }
