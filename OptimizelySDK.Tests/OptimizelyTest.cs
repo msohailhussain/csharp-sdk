@@ -51,7 +51,6 @@ namespace OptimizelySDK.Tests
         private Variation VariationWithKeyControl;
         private Variation VariationWithKeyVariation;
         private Variation GroupVariation;
-        private Optimizely OptimizelyTypedAudience;
 
         #region Test Life Cycle
         [SetUp]
@@ -78,7 +77,6 @@ namespace OptimizelySDK.Tests
 
             EventDispatcherMock = new Mock<IEventDispatcher>();
             Optimizely = new Optimizely(TestData.Datafile, EventDispatcherMock.Object, LoggerMock.Object, ErrorHandlerMock.Object);
-            OptimizelyTypedAudience = new Optimizely(TestData.TypedAudienceDatafile, EventDispatcherMock.Object, LoggerMock.Object, ErrorHandlerMock.Object);
 
             Helper = new OptimizelyHelper
             {
@@ -1951,45 +1949,6 @@ namespace OptimizelySDK.Tests
         #region Test ValidateStringInputs
 
         [Test]
-        public void TestValidateStringInputsWithValidValues()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "test_experiment" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, "buy_now_event" } });
-            Assert.True(result);
-        }
-
-        [Test]
-        public void TestValidateStringInputsWithInvalidValues()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "" } });
-            Assert.False(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, null } });
-            Assert.False(result);
-        }
-
-        [Test]
-        public void TestValidateStringInputsWithUserId()
-        {
-            var optly = Helper.CreatePrivateOptimizely();
-
-            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "testUser" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "" } });
-            Assert.True(result);
-
-            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, null } });
-            Assert.False(result);
-        }
-
-        [Test]
         public void TestActivateValidateInputValues()
         {
             // Verify that ValidateStringInputs does not log error for valid values.
@@ -2033,116 +1992,47 @@ namespace OptimizelySDK.Tests
 
         #endregion // Test ValidateStringInputs
 
-        #region Test Audience Match Types
+        #region TestValidateStringInputs
 
         [Test]
-        public void TestActivateWithTypedAudiences()
+        public void TestValidateStringInputsWithValidValues()
         {
-            var variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
-            {
-                { "house", "Gryffindor" }
-            });
+            var optly = Helper.CreatePrivateOptimizely();
 
-            Assert.AreEqual("A", variation.Key);
-            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Once);
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "test_experiment" } });
+            Assert.True(result);
 
-            variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
-            {
-                { "lasers", 45.5 }
-            });
-
-            Assert.AreEqual("A", variation.Key);
-            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Exactly(2));
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, "buy_now_event" } });
+            Assert.True(result);
         }
 
         [Test]
-        public void TestActivateExcludeUserFromExperimentWithTypedAudiences()
+        public void TestValidateStringInputsWithInvalidValues()
         {
-            var variation = OptimizelyTypedAudience.Activate("typed_audience_experiment", "user1", new UserAttributes
-            {
-                { "house", "Hufflepuff" }
-            });
+            var optly = Helper.CreatePrivateOptimizely();
 
-            Assert.Null(variation);
-            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Never);
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EXPERIMENT_KEY, "" } });
+            Assert.False(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.EVENT_KEY, null } });
+            Assert.False(result);
         }
 
         [Test]
-        public void TestTrackWithTypedAudiences()
+        public void TestValidateStringInputsWithUserId()
         {
-            OptimizelyTypedAudience.Track("item_bought", "user1", new UserAttributes
-            {
-                { "house", "Welcome to Slytherin!" }
-            });
+            var optly = Helper.CreatePrivateOptimizely();
 
-            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Once);
+            bool result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "testUser" } });
+            Assert.True(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, "" } });
+            Assert.True(result);
+
+            result = (bool)optly.Invoke("ValidateStringInputs", new Dictionary<string, string> { { Optimizely.USER_ID, null } });
+            Assert.False(result);
         }
 
-        [Test]
-        public void TestTrackExcludeUserFromExperimentWithTypedAudiences()
-        {
-            OptimizelyTypedAudience.Track("item_bought", "user1", new UserAttributes
-            {
-                { "house", "Hufflepuff" }
-            });
-
-            EventDispatcherMock.Verify(dispatcher => dispatcher.DispatchEvent(It.IsAny<LogEvent>()), Times.Never);
-        }
-
-        [Test]
-        public void TestIsFeatureEnabledWithTypedAudiences()
-        {
-            var featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes
-            {
-                { "favorite_ice_cream", "chocolate" }
-            });
-
-            Assert.True(featureEnabled);
-
-            featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes
-            {
-                { "lasers", 45.5 }
-            });
-
-            Assert.True(featureEnabled);
-        }
-
-        [Test]
-        public void TestIsFeatureEnabledExcludeUserFromExperimentWithTypedAudiences()
-        {
-            var featureEnabled = OptimizelyTypedAudience.IsFeatureEnabled("feat", "user1", new UserAttributes { });
-            Assert.False(featureEnabled);
-        }
-
-        [Test]
-        public void TestGetFeatureVariableStringReturnVariableValueWithTypedAudiences()
-        {
-            var variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
-            {
-                { "lasers", 71 }
-            });
-
-            Assert.AreEqual(variableValue, "xyz");
-
-            variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
-            {
-                { "should_do_it", true }
-            });
-
-            Assert.AreEqual(variableValue, "xyz");
-        }
-
-        [Test]
-        public void TestGetFeatureVariableStringReturnDefaultVariableValueWithTypedAudiences()
-        {
-            var variableValue = OptimizelyTypedAudience.GetFeatureVariableString("feat_with_var", "x", "user1", new UserAttributes
-            {
-                { "lasers", 50 }
-            });
-
-            Assert.AreEqual(variableValue, "x");
-        }
-
-        #endregion // Test Audience Match Types
+        #endregion //TestValidateStringInputs
     }
 }

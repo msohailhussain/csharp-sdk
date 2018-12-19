@@ -26,8 +26,7 @@ namespace OptimizelySDK.Tests
         private static string cachedDataFile = null;
         private static string simpleABExperimentsDatafile = null;
         private static string unsupportedVersionDatafile = null;
-        private static string typedAudienceDatafile = null;
-
+        
         public static string Datafile
         {
             get
@@ -51,15 +50,7 @@ namespace OptimizelySDK.Tests
                 return unsupportedVersionDatafile ?? (unsupportedVersionDatafile = LoadJsonData("unsupported_version_datafile.json"));
             }
         }
-
-        public static string TypedAudienceDatafile
-        {
-            get
-            {
-                return typedAudienceDatafile ?? (typedAudienceDatafile = LoadJsonData("typed_audience_datafile.json"));
-            }
-        }
-
+        
         private static string LoadJsonData(string fileName = "TestData.json")
         {
             var assembly = Assembly.GetExecutingAssembly();

@@ -35,8 +35,8 @@ namespace OptimizelySDK.Utils
             if (!audienceIds.Any())
                 return true;
 
-            if (userAttributes == null)
-                userAttributes = new UserAttributes();
+            if (userAttributes == null || !userAttributes.Any())
+                return false;
             
             var conditionEvaluator = new ConditionEvaluator();
             return audienceIds.Any(id => conditionEvaluator.Evaluate(config.GetAudience(id).ConditionList, userAttributes).GetValueOrDefault());
