@@ -232,7 +232,6 @@ namespace OptimizelySDK
             _AudienceIdMap = ConfigParser<Audience>.GenerateMap(entities: Audiences, getKey: a => a.Id.ToString(), clone: true);
             _FeatureKeyMap = ConfigParser<FeatureFlag>.GenerateMap(entities: FeatureFlags, getKey: f => f.Key, clone: true);
             _RolloutIdMap = ConfigParser<Rollout>.GenerateMap(entities: Rollouts, getKey: r => r.Id.ToString(), clone: true);
-            
             foreach (Group group in Groups)
             {
                 var experimentsInGroup = ConfigParser<Experiment>.GenerateMap(group.Experiments, getKey: e => e.Key, clone: true);
