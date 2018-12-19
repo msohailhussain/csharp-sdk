@@ -149,9 +149,6 @@
     <Compile Include="..\OptimizelySDK\Utils\Schema.cs">
       <Link>Utils\Schema.cs</Link>
     </Compile>
-	<Compile Include="..\OptimizelySDK\Utils\TypeExtensions.cs">
-      <Link>Utils\TypeExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\OptimizelySDK\Utils\Validator.cs">
       <Link>Utils\Validator.cs</Link>
     </Compile>
