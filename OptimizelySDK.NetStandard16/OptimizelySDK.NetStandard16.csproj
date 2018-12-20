@@ -50,7 +50,6 @@
         <Compile Include="..\OptimizelySDK\Utils\ConfigParser.cs" />
         <Compile Include="..\OptimizelySDK\Utils\Schema.cs" />
 		<Compile Include="..\OptimizelySDK\Utils\ControlAttributes.cs" />
-		<Compile Include="..\OptimizelySDK\Utils\TypeExtensions.cs" />
 		<Compile Include="..\OptimizelySDK\Utils\ExperimentUtils.cs" />
 		<Compile Include="..\OptimizelySDK\Utils\Evaluator.cs" />
         <Compile Include="..\OptimizelySDK\Bucketing\Bucketer.cs" />

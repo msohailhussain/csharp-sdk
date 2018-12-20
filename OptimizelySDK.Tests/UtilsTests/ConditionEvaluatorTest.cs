@@ -367,6 +367,21 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
+        public void TestExactMatcherReturnsNullForInvalidNumericValue()
+        {
+            var invalidPositiveValue = System.Math.Pow(2, 53) + 2;
+            var invalidNegativeValue = (System.Math.Pow(2, 53) * -1) - 2;
+            
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", double.NaN } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", double.PositiveInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", invalidNegativeValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", (ulong)invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(ExactIntCondition, new UserAttributes { { "attr_value", (long)invalidNegativeValue } }));
+        }
+
+        [Test]
         public void TestExactMatcherReturnsTrueWhenAttributeValueMatches()
         {
             Assert.That(ConditionEvaluator.Evaluate(ExactStrCondition, new UserAttributes { { "attr_value", "firefox" } }), Is.True);
@@ -438,9 +453,18 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
+        public void TestGTMatcherReturnsNullWhenForInvalidNumericValue()
         {
+            var invalidPositiveValue = System.Math.Pow(2, 53) + 2;
+            var invalidNegativeValue = (System.Math.Pow(2, 53) * -1) - 2;
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", double.NaN } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", double.PositiveInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", invalidNegativeValue } }));
             Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", "invalid" } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", (ulong)invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(GTCondition, new UserAttributes { { "attr_value", (long)invalidNegativeValue } }));
         }
 
         [Test]
@@ -461,9 +485,18 @@ namespace OptimizelySDK.Tests.UtilsTests
         }
 
         [Test]
-        public void TestLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue()
+        public void TestLTMatcherReturnsNullForInvalidNumericValue()
         {
+            var invalidPositiveValue = System.Math.Pow(2, 53) + 2;
+            var invalidNegativeValue = (System.Math.Pow(2, 53) * -1) - 2;
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", double.NaN } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", double.NegativeInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", double.PositiveInfinity } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", invalidNegativeValue } }));
             Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", "invalid" } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", (ulong)invalidPositiveValue } }));
+            Assert.Null(ConditionEvaluator.Evaluate(LTCondition, new UserAttributes { { "attr_value", (long)invalidNegativeValue } }));
         }
 
         [Test]
