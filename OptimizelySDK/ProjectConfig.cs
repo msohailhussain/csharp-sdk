@@ -238,9 +238,9 @@ namespace OptimizelySDK
             _AudienceIdMap = ConfigParser<Audience>.GenerateMap(entities: Audiences, getKey: a => a.Id.ToString(), clone: true);
             _FeatureKeyMap = ConfigParser<FeatureFlag>.GenerateMap(entities: FeatureFlags, getKey: f => f.Key, clone: true);
             _RolloutIdMap = ConfigParser<Rollout>.GenerateMap(entities: Rollouts, getKey: r => r.Id.ToString(), clone: true);
-            var typedAudienceIdMap = ConfigParser<Audience>.GenerateMap(entities: TypedAudiences, getKey: a => a.Id.ToString(), clone: true);
 
             // Overwrite similar items in audience id map with typed audience id map.
+            var typedAudienceIdMap = ConfigParser<Audience>.GenerateMap(entities: TypedAudiences, getKey: a => a.Id.ToString(), clone: true);
             foreach (var item in typedAudienceIdMap)
                 _AudienceIdMap[item.Key] = item.Value;
 
